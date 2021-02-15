@@ -90,4 +90,8 @@ Route::get('/login/{email?}',function ($email){
    Route::get('requests/getSubGroupFromGroup/{id}','PrRequestsController@getSubGroup');
    Route::get('requests/getItemFromSubGroup/{id}','PrRequestsController@getItems');
 
+
+   Route::get('export', 'DemoController@export')->name('export');
+Route::get('importExportView', 'DemoController@importExportView');
+Route::post('import', 'DemoController@import')->name('import');
 });

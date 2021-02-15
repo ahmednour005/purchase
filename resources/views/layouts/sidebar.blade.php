@@ -40,14 +40,14 @@
 
           <li class="nav-item">
             <a href="{{route('home')}}" class="nav-link">
-              <i class="fa fa-tachometer-alt nav-icon"></i>
+              <i class="fa fa-hand-pointer nav-icon"></i>
               <p> Action Required</p>
             </a>
           </li>
 
           <li class="nav-item">
             <a href="{{route('home')}}" class="nav-link">
-            <i class="fa fa-tachometer-alt nav-icon"></i>
+                <i class="fab fa-wpforms nav-icon"></i>
             <p> Form Status</p>
             </a>
           </li>
@@ -173,7 +173,7 @@
 {{--  users  --}}
 
             @if(auth()->user()->hasPermission('users_read'))
-            <li class="nav-header">@lang('site.settings')</li>
+             <li class="nav-header">@lang('site.settings')</li>
               <li class="nav-item " title="جميع المسنخدمين الموجودين فى الشركه" >
                 <a href="{{route('users.index')}}"  class="nav-link {{ ((request()->is('*users')) ||
                     (request()->is('*users/*/edit')) || (request()->is('*users/profile*'))) ? 'active' : '' }} ">
