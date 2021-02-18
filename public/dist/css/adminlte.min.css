@@ -323,7 +323,7 @@ top:65% !important;
   border: 1px solid #DDD;
   border-radius: 5px;
   background: #FFF;
-  padding: 27px;
+  padding: 10px 27px;
 }
 .select2-container--default.select2-container--focus .select2-selection--multiple, .select2-container--default.select2-container--focus .select2-selection--single{
   outline:0 !important;
@@ -917,4 +917,8 @@ background: #FFF;
     padding: 10px;
     box-shadow: 0 0 10px rgb(0 0 0 / 10%);
     border-radius: 5px;
+}
+.approval-steps hr{
+    width: 83%;
+    margin-top: 5px;
 }

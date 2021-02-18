@@ -161,6 +161,31 @@
                 </div>
             </div>
 
+
+            {{--  Action required  --}}
+            <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box  bg-danger">
+                    <div class="inner">
+                        @if($users_count)
+                            <h3>{{$users_count}}</h3>
+                            <p> Action Required</p>
+                        @else
+                            <h3 class="dashboard-alert"><i class="fa fa-exclamation"></i></h3>
+                            <p> Action Required</p>
+                        @endif
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-users-cog"></i>
+                    </div>
+                    @if(auth()->user()->hasPermission("users_read"))
+                    <a href="{{route('users.index')}}" class="small-box-footer">   @lang('site.details') <i class="fas fa-arrow-circle-right"></i></a>
+                    @else
+                    <a  class="small-box-footer" style="height: 33px"> </a>
+                    @endif
+                </div>
+            </div>
+
         </div>
         <!-- /.row -->
         <!-- Info boxes -->
@@ -309,11 +334,13 @@
           <!-- /.col -->
         </div>
 
+
             <div class="row requests-canvas">
                 <div class="col-sm-6 mb-3">
 
                     <canvas id="myChart" width="400" height="220px" ></canvas>
                 </div>
+                {{--  calendaer  --}}
                 <div class="col-sm-6">
                     <div class="card bg-gradient-success" style="position: relative; left: 0px; top: 0px;">
                         <div class="card-header border-0 ui-sortable-handle" style="cursor: move;">

@@ -83,15 +83,20 @@ Route::get('/login/{email?}',function ($email){
     // users
 
     Route::resource('/users', 'User\UserController')->middleware('auth');
-    Route::get('/users/profile/{id}','User\UserController@getProfile')->name('users.profile')->middleware('auth');;
+    Route::get('/users/profile/{id}','User\UserController@getProfile')->name('users.profile')->middleware('auth');
 
      // Purchase Request
-   Route::resource('requests', 'PrRequestsController');
-   Route::get('requests/getSubGroupFromGroup/{id}','PrRequestsController@getSubGroup');
-   Route::get('requests/getItemFromSubGroup/{id}','PrRequestsController@getItems');
+   Route::resource('requests', 'PrRequestsController')->middleware('auth');
+   Route::get('requests/getSubGroupFromGroup/{id}','PrRequestsController@getSubGroup')->middleware('auth');
+   Route::get('requests/getItemFromSubGroup/{id}','PrRequestsController@getItems')->middleware('auth');
 
 
-   Route::get('export', 'DemoController@export')->name('export');
-Route::get('importExportView', 'DemoController@importExportView');
-Route::post('import', 'DemoController@import')->name('import');
+   Route::get('export', 'DemoController@export')->name('export')->middleware('auth');
+   Route::get('importExportView', 'DemoController@importExportView')->middleware('auth');
+   Route::post('import', 'DemoController@import')->name('import')->middleware('auth');
+
+    //    approval
+   Route::resource('approvals', 'Approval\ApprovalController')->middleware('auth');
+
+
 });

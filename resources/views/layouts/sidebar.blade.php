@@ -134,8 +134,6 @@
               </li>
 {{--  requests  --}}
 
-
-
 <li class="nav-item {{ ( (request()->is('*requests*')) )? ' menu-open' : '' }}">
 
      @if(auth()->user()->hasPermission('service_create') || auth()->user()->hasPermission('product_create')
@@ -169,11 +167,46 @@
  </li>
 
 
+ {{--  Setting  --}}
 
-{{--  users  --}}
+                <li class="nav-header">@lang('site.settings')</li>
+            {{--  Approval  --}}
+            <li class="nav-item {{ ( (request()->is('*approvals*')) )? ' menu-open' : '' }}">
+
+                @if(auth()->user()->hasPermission('service_create') || auth()->user()->hasPermission('product_create')
+                || auth()->user()->hasPermission('mainGroup_read') || auth()->user()->hasPermission('mainGroup_create') )
+                   <a href="#" class="nav-link">
+                    <i class="nav-icon fas fa-project-diagram"></i>
+                    <p>
+                        Approval
+                        <i class="fas fa-angle-left right"></i>
+                    </p>
+                </a>
+              @endif
+
+                <ul class="nav nav-treeview">
+
+                    <li class="nav-item">
+                        <a href="{{route('approvals.create')}}" class="nav-link {{ (request()->is('*approvals/create')) ? 'active' : '' }}">
+                            <i class="fas fa-plus-circle nav-icon"></i>
+                            <p>Add Approval </p>
+                        </a>
+                     </li>
+                    <li class="nav-item">
+                        <a href="{{route('approvals.index')}}" class="nav-link {{ (request()->is('*approvals')) ? 'active' : '' }}">
+                            <i class="fas fa-eye nav-icon"></i>
+
+                            <p>Show Approvals </p>
+                        </a>
+                        </li>
+
+                </ul>
+
+            </li>
+            {{--  users  --}}
 
             @if(auth()->user()->hasPermission('users_read'))
-             <li class="nav-header">@lang('site.settings')</li>
+
               <li class="nav-item " title="جميع المسنخدمين الموجودين فى الشركه" >
                 <a href="{{route('users.index')}}"  class="nav-link {{ ((request()->is('*users')) ||
                     (request()->is('*users/*/edit')) || (request()->is('*users/profile*'))) ? 'active' : '' }} ">
@@ -186,6 +219,7 @@
                 </a>
               </li>
             @endif
+
 
         </ul>
       </nav>
