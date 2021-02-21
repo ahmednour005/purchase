@@ -87,19 +87,15 @@
             </div>
            </div>
 
-           <form action="{{ route('import') }}" method="POST" enctype="multipart/form-data">
+           {{--  <form action="{{ route('import') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <input type="file" name="file" class="form-control">
             <br>
             <button type="submit" class="btn btn-success">Import User Data</button>
             <a class="btn btn-warning" href="{{ route('export') }}">Export User Data</a>
-        </form>
+        </form>  --}}
 
             <div class="card">
-                {{--  <div class="card-header">
-                    <h5>Items Table</h5>
-                </div>  --}}
-                {{--  <div class="card-body">  --}}
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped table-hover justify-content-center text-center">
                         <thead>
