@@ -15,5 +15,10 @@ class StepApproval extends Model
         return $this->belongsToMany('App\User','user__step_approvals');
     }
 
+    public function approval()
+    {
+        return $this->belongsTo('App\Models\Approval');
+    }
+
 
 }

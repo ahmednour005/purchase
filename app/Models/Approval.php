@@ -9,5 +9,8 @@ class Approval extends Model
     protected $fillable = [
         'id' ,'approval_name'
     ];
-
+    public function step_approvals()
+    {
+        return $this->hasMany('App\Models\StepApproval');
+    }
 }

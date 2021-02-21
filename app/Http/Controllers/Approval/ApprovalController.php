@@ -19,10 +19,13 @@ class ApprovalController extends Controller
      */
     public function index()
     {
-        $data=0;
-        $users = User::all();
-        $users_count=  $users->count();
-        return view('pages.approvals.approvals',compact('users_count','data','users'));
+
+        $users_count=  User::count();
+        $approvals = Approval::all();
+        $i=0;
+
+        // return $approval;
+        return view('pages.approvals.approvals',compact('i','users_count','users','approvals'));
     }
 
     /**
@@ -46,59 +49,30 @@ class ApprovalController extends Controller
      */
     public function store(Request $request)
     {
+        $approval = Approval::create([
+            'approval_name' =>$request->approval_name,
+        ]);
 
-
-
-        // $approval = Approval::create([
-        //     'approval_name' =>$request->approval_name,
-        // ]);
-
-
-       // $persons = $request->persons;
-        // foreach($persons as $person) {
-
-        //     Person_Supplier::create([
-        //         'supplier_id' =>   $sup->id,
-        //         'job_title' => $person['job_title'],
-        //         'responsible_person' => $person['responsible_person'],
-        //         'mobile' => $person['mobile'],
-        //         'whatsapp' => $person['whatsapp'],
-        //         'person_email' => $person['person_email']
-
-        //     ]);
-        // }
-
-// dd($request->steps[0][0]);
-        $index = 0;
+       $index = 0;
         if($request->steps){
-            foreach ($request->steps as $steps){
-                // $step_approval = StepApproval::create([
-                //     'approval_id'=>$approval->id,
-                //     'step_name' => $steps['step_name'],
-                // ]);
+            foreach ($request->steps as $step){
+                $step_approval = StepApproval::create([
+                    'approval_id'=>$approval->id,
+                    'step_name' => $step['step_name'],
+                ]);
 
-                // if($request->step_users[$index]){
-                    foreach ($steps[$index] as $users){
-
-                           print_r($steps[$index]);
-                        //  User_StepApproval::create([
-                        //     'user_id' => $users,
-                        //     'step_approval_id' => $step_approval->id
-                        //  ]);
-
-                            //  dd($users);
-                        // echo $users .'<br>';
-                        // }
-                    }
-
-                    $index++;
+                   $index = count($step)-1;
+                      for($i=0;$i<$index;$i++){
+                            User_StepApproval::create([
+                            'user_id' =>  $step[$i]['step_users'],
+                            'step_approval_id' => $step_approval->id
+                          ]);
+                       }
             }
         }
 
-
-
-        // Toastr::success(trans('site.supplier_success_add'),trans('site.success'));
-        // return redirect('/approvals');
+         Toastr::success(trans('Success Added'),trans('Success'));
+         return redirect('/approvals');
     }
 
     /**
@@ -109,7 +83,9 @@ class ApprovalController extends Controller
      */
     public function show($id)
     {
-        //
+        $users_count=  User::count();
+        $approval = Approval::find($id);
+        return view('pages.approvals.show_approval',compact('users_count','approval'));
     }
 
     /**
