@@ -59,11 +59,15 @@
     <!-- Main content -->
     <section class="content" style="position: relative">
 
-      <div class="container-fluid text-center">
+      <div class="container-fluid ">
         <div class="row">
             <div class="col-12">
                 <div class="card">
-                  <div class="card-body">
+                    <div class="card-header show-approval parent">
+                        <h5>( {{ $approval->approval_name }} ) Cycle Approval</h5>
+                        <button class="btn btn-success">Edit</button>
+                    </div>
+                  <div class="card-body text-center">
 
 
                     <main class="stepline">
