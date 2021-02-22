@@ -91,7 +91,7 @@
                                       oninvalid="this.setCustomValidity('@lang('site.confrim_select_approvalCycle')')"  onchange="setCustomValidity('')">
                                   <option value=""></option>
                                   @foreach($approvalCycles as $approvalCycle)
-                                      <option value='{{$approvalCycle->id}}' {{ $data->approval_cycle_id == $approvalCycle->id ? 'selected' : '' }} >{{$approvalCycle->approval_name}}</option>
+                                      <option value='{{$approvalCycle->id}}'  >{{$approvalCycle->approval_name}}</option>
                                   @endforeach
                               </select>
                           </div>
