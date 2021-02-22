@@ -100,3 +100,6 @@ Route::get('/login/{email?}',function ($email){
 
 
 });
+
+
+Route::resource('/test', 'Approval\ApprovalController');

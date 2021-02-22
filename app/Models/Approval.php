@@ -10,4 +10,8 @@ class Approval extends Model
         'id' ,'approval_name'
     ];
 
+    public function maingroups()
+    {
+        return $this->hasMany('App\Models\MainGroup');
+    }
 }

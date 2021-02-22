@@ -112,7 +112,7 @@
           {{ request()->email }}
           @endif  --}}
 
-          @if($validUser == 2)
+          @if($validUser ?? '' == 2)
           <form class="sign-up-form" method="POST" action="{{ route('login') }}">
             @csrf
         <h2 class="title">@lang('site.login')</h2>
@@ -158,7 +158,7 @@
 
         </form>
 
-          @elseif($validUser == 1)
+          @elseif($validUser ?? '' == 1)
                 <div class="message-permission">
                     <span>  عفوا !</span>
                 <br>    لا يمكنك الدخول للتطبيق

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Supplier;
 use App\Http\Controllers\Controller;
 use App\Models\MainGroup;
 use App\Models\Service;
+use App\Models\Approval;
 use App\Models\Service_Supplier;
 use App\User;
 use Brian2694\Toastr\Facades\Toastr;
@@ -21,10 +22,11 @@ class MainGroupController extends Controller
     public function index()
     {
         $mainGroups = MainGroup::orderBy('id', 'DESC')->get();
+        $approvalCycles = Approval::orderBy('id', 'DESC')->get();
         $data =null;
         $users = User::all();
         $users_count=  $users->count();
-        return view('pages.suppliers.main_group',compact('users_count','mainGroups','data'));
+        return view('pages.suppliers.main_group',compact('users_count','mainGroups', 'approvalCycles','data'));
     }
 
     /**

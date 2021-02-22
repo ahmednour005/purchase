@@ -86,6 +86,16 @@
                                 <input type="text" name="group_name" value="" class="form-control" required="" oninvalid="this.setCustomValidity('@lang('site.check_service')')"  oninput="setCustomValidity('')" >
                             </div>
                             <div class="form-group">
+                              <label >@lang('site.add_approvalCycle')</label>
+                              <select id='approval_cycle_select' name="approval_cycle_id" class="form-control" required=""
+                                      oninvalid="this.setCustomValidity('@lang('site.confrim_select_approvalCycle')')"  onchange="setCustomValidity('')">
+                                  <option value=""></option>
+                                  @foreach($approvalCycles as $approvalCycle)
+                                      <option value='{{$approvalCycle->id}}' {{ $data->approval_cycle_id == $approvalCycle->id ? 'selected' : '' }} >{{$approvalCycle->approval_name}}</option>
+                                  @endforeach
+                              </select>
+                          </div>
+                            <div class="form-group">
                                 <input type="submit"  class="btn btn-success" value="@lang('site.add')">
                             </div>
                         </form>
@@ -262,6 +272,10 @@
   });
 </script>
 <script>
+    $('#approval_cycle_select').select2();
+    $('#approval_cycle_select').select2({
+        placeholder: '@lang("site.add_approvalCycle") ',
+    });
     $('#mainGroup_delete').on('show.bs.modal',function(event){
 
         var button = $(event.relatedTarget);

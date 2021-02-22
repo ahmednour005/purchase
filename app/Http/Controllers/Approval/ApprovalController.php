@@ -68,19 +68,98 @@ class ApprovalController extends Controller
         //     ]);
         // }
 
-// dd($request->steps[0][0]);
-        $index = 0;
-        if($request->steps){
-            foreach ($request->steps as $steps){
+    // dd($request->steps[0][0]['step_users']);
+        
+    // $data = json_decode($request, true);   
+    $index = 0;
+    $num=0; 
+
+    // $idx = count($request['steps']);
+    // for($i=0;$i<$idx;$i++){
+    // print $request['steps'][$i]['id'];
+    // }
+
+    
+
+
+    // function printAll($a) {
+    //     if (!is_array($a)) {
+    //         echo $a, ' ';
+    //         return;
+    //     }
+    
+    //     foreach($a as $k => $value) {
+    
+    //          printAll($k);
+    //          printAll($value);
+    
+    //     }
+    // }
+
+    // printAll($request['steps']);
+
+    // $approval_details = [];
+    // for($i= 0; $i < count($request->steps); $i++){
+        
+    //     echo $i."<br>";
+    //     // print_r($request->steps[$i]);
+    //     $approval_details[] = [
+    //         'step_name' => $request['steps'],
+    //         'step_user' => $request['step'][$i],
+    //     ];
+    // }
+
+    // for ($j=0; $j <count ($approval_details) ; $j++) { 
+    //     print_r($approval_details[$j]);
+    // }
+
+        // foreach ($request->steps as $step)
+        // {  
+        //     // $index++;
+        //     // $num=0; 
+        //     $num++;
+        //     echo "<br><b># $num</b><br>";
+        //     // echo "<br><b># $step[]</b><br>";
+        //     print_r ($step ['step_name']);
+        //     // print_r ($step ['step_user']);
+
+        //     foreach ($step as $key=>$value)
+        //     {
+        //         $index++;
+        //         echo "<br><b># $index</b><br>";
+        //         // echo "<br><b>$step['']</b><br>";
+                    
+        //     //     echo $step.'<br>';
+        //     //     // foreach ($step as $step['step_name']) {
+        //     //     //     echo "step[step_name]";
+        //     //     // }
+        //         print_r ('$key:$value');
+        //     } 
+        //     echo "<br><b># end of loop $num</b><br>";
+
+        // }
+
+
+        // $keys = array_keys($data);
+        // for($i = 0; $i < count($data); $i++) {
+        //     echo $keys[$i] . "{<br>";
+        //     foreach($data[$keys[$i]] as $key => $value) {
+        //         echo $key . " : " . $value . "<br>";
+        //     }
+        //     echo "}<br>";
+        // }
+
+        // if($request->steps){
+        //     foreach ($request->steps as $steps){
                 // $step_approval = StepApproval::create([
                 //     'approval_id'=>$approval->id,
                 //     'step_name' => $steps['step_name'],
                 // ]);
 
                 // if($request->step_users[$index]){
-                    foreach ($steps[$index] as $users){
+                    // foreach ($steps[$index] as $users){
 
-                           print_r($steps[$index]);
+                        //    print_r($steps[$index]);
                         //  User_StepApproval::create([
                         //     'user_id' => $users,
                         //     'step_approval_id' => $step_approval->id
@@ -89,11 +168,11 @@ class ApprovalController extends Controller
                             //  dd($users);
                         // echo $users .'<br>';
                         // }
-                    }
+                    // }
 
-                    $index++;
-            }
-        }
+                    // $index++;
+            // }
+        // }
 
 
 
