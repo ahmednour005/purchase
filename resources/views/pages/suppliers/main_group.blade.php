@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="{{asset('plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
   <link rel="stylesheet" href="{{asset('plugins/datatables-buttons/css/buttons.bootstrap4.min.css')}}">
   <!-- Theme style -->
+  <link rel="stylesheet" type="text/css" href="{{asset('plugins/select2/dist/css/select2.min.css')}}">
   <link rel="stylesheet" href="{{asset('dist/css/adminlte.min.css')}}">
     <link rel="stylesheet" href="http://cdn.bootcss.com/toastr.js/latest/css/toastr.min.css">
     <link href="https://fonts.googleapis.com/css?family=Cairo:400,700" rel="stylesheet">
@@ -96,9 +97,8 @@
                             </div>
                             <div class="form-group">
                               <label >@lang('site.add_approvalCycle')</label>
-                              <select id='approval_cycle_select' name="approval_id" class="form-control approval_cycle_select" required=""
-                                      oninvalid="this.setCustomValidity('@lang('site.confrim_select_approvalCycle')')"  onchange="setCustomValidity('')">
-                                  <option></option>
+                              <select id='approval_cycle_select' name="approval_id" class="form-control approval_cycle_select" required>
+                                  <option value=""></option>
                                   @foreach($approvals as $approval)
                                       <option value='{{$approval->id}}'  >{{$approval->approval_name}}</option>
                                   @endforeach
