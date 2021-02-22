@@ -161,6 +161,9 @@ return [
     'Groups'=>'التصنيفات',
     
     'add_approvalCycle'=>'إضافة دورة',
+    'approvalCycle'=>'اسم دورة الإعتماد ',
+    'edit_approvalCycle' => 'تعديل الدورة',
+
     // confrim_select_mainGroup
 
     'all_requests' => 'جميع الطلبات',

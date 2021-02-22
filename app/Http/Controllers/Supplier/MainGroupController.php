@@ -22,11 +22,11 @@ class MainGroupController extends Controller
     public function index()
     {
         $mainGroups = MainGroup::orderBy('id', 'DESC')->get();
-        $approvalCycles = Approval::orderBy('id', 'DESC')->get();
+        $approvals = Approval::orderBy('id', 'DESC')->get();
         $data =null;
         $users = User::all();
         $users_count=  $users->count();
-        return view('pages.suppliers.main_group',compact('users_count','mainGroups', 'approvalCycles','data'));
+        return view('pages.suppliers.main_group',compact('users_count','mainGroups', 'approvals','data'));
     }
 
     /**
@@ -75,9 +75,10 @@ class MainGroupController extends Controller
     {
         $data = MainGroup::findOrFail($id);
         $mainGroups = MainGroup::orderBy('id', 'DESC')->get();
+        $approvals = Approval::orderBy('id', 'DESC')->get();
         $users = User::all();
         $users_count=  $users->count();
-        return view('pages.suppliers.main_group',compact('mainGroups','data','users_count'));
+        return view('pages.suppliers.main_group',compact('mainGroups', 'approvals','data','users_count'));
     }
 
     /**

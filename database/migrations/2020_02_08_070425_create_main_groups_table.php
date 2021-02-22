@@ -17,8 +17,8 @@ class CreateMainGroupsTable extends Migration
             $table->id();
             $table->string('group_name');
 
-            $table->bigInteger('approval_cycle_id')->unsigned();
-            $table->foreign('approval_cycle_id')->references('id')->on('approvals')->onDelete('cascade');
+            $table->bigInteger('approval_id')->unsigned();
+            // $table->foreign('approval_cycle_id')->references('id')->on('approvals')->onDelete('cascade');
             
             $table->timestamps();
         });

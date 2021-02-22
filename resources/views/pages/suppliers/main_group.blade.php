@@ -68,6 +68,15 @@
                             <input type="text" name="group_name" value="{{$data->group_name}}" class="form-control" required="" oninvalid="this.setCustomValidity('@lang('site.check_service')')"  oninput="setCustomValidity('')" >
                         </div>
                         <div class="form-group">
+                          <label >@lang('site.edit_approvalCycle')</label>
+                          <select id='approval_cycle_select' name="approval_id" class="form-control approval_cycle_select" required="" onchange="setCustomValidity('')">
+                              <option></option>
+                              @foreach($approvals as $approval)
+                                  <option   value='{{$approval->id}}' {{ $data->approval_id == $approval->id ? 'selected' : '' }} >{{$approval->approval_name}}</option>
+                              @endforeach
+                          </select>
+                      </div>
+                        <div class="form-group">
                             {{ method_field('PUT') }}
                             <input type="submit"  class="btn btn-success" value="@lang('site.edit')">
                         </div>
@@ -87,11 +96,11 @@
                             </div>
                             <div class="form-group">
                               <label >@lang('site.add_approvalCycle')</label>
-                              <select id='approval_cycle_select' name="approval_cycle_id" class="form-control" required=""
+                              <select id='approval_cycle_select' name="approval_id" class="form-control approval_cycle_select" required=""
                                       oninvalid="this.setCustomValidity('@lang('site.confrim_select_approvalCycle')')"  onchange="setCustomValidity('')">
-                                  <option value=""></option>
-                                  @foreach($approvalCycles as $approvalCycle)
-                                      <option value='{{$approvalCycle->id}}'  >{{$approvalCycle->approval_name}}</option>
+                                  <option></option>
+                                  @foreach($approvals as $approval)
+                                      <option value='{{$approval->id}}'  >{{$approval->approval_name}}</option>
                                   @endforeach
                               </select>
                           </div>
@@ -125,8 +134,9 @@
                 <table id="example1" class="table table-bordered table-striped">
                   <thead>
                   <tr style="text-align:center;">
-                    <th  > @lang('site.id')</th>
+                    <th  > @lang('site.id')</th>  
                     <th  > @lang('site.mainGroup')</th>
+                    <th  > @lang('site.approvalCycle')</th>
                     @if(auth()->user()->hasPermission("mainGroup_update") ||
                     auth()->user()->hasPermission("mainGroup_delete"))
                     <th width="28%">  @lang('site.actions')</th>
@@ -139,6 +149,7 @@
                         <tr>
                             <td>{{$mainGroup->id}}</td>
                             <td>{{$mainGroup->group_name}}</td>
+                            <td>{{$mainGroup->approval->approval_name}}</td>
 
                             @if(auth()->user()->hasPermission("mainGroup_update") ||
                              auth()->user()->hasPermission("mainGroup_delete"))
@@ -232,6 +243,9 @@
 <script src="{{asset('plugins/datatables-buttons/js/buttons.colVis.min.js')}}"></script>
 <!-- AdminLTE App -->
 <script src="{{asset('dist/js/adminlte.min.js')}}"></script>
+{{-- Select2 --}}
+<script src="{{asset('plugins/select2/dist/js/select2.min.js')}}" type="text/javascript"></script>
+
 <!-- AdminLTE for demo purposes -->
 <script src="{{asset('dist/js/demo.js')}}"></script>
 <!-- Page specific script -->
@@ -277,9 +291,7 @@
         placeholder: '@lang("site.add_approvalCycle") ',
     });
     $('#mainGroup_delete').on('show.bs.modal',function(event){
-
         var button = $(event.relatedTarget);
-        console.log(button);
         var serviceid = button.data('maingroup_id');
         $('.modal #mainGroup_id').val(serviceid);
     })

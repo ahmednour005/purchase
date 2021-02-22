@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class MainGroup extends Model
 {
     protected $fillable = [
-        'id', 'group_name', 'approval_cycle_id'
+        'id', 'group_name', 'approval_id'
     ];
 
 
@@ -27,6 +27,6 @@ class MainGroup extends Model
 
     public function approval()
     {
-        return $this->hasOne('App\Models\Approval');
+        return $this->belongsTo('App\Models\Approval');
     }
 }
