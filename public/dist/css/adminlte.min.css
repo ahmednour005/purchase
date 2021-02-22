@@ -930,7 +930,7 @@ background: #FFF;
 .show-approval.parent h5{
     float: left;
 }
-.show-approval.parent button{
+.show-approval.parent a{
     border: 1px solid;
     float: right;
     padding: 3px 10px;

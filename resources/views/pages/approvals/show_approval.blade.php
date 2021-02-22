@@ -65,11 +65,9 @@
                 <div class="card">
                     <div class="card-header show-approval parent">
                         <h5>( {{ $approval->approval_name }} ) Cycle Approval</h5>
-                        <button class="btn btn-success">Edit</button>
+                        <a href="{{ route('approvals.edit',$approval->id) }}" class="btn btn-success">Edit</a>
                     </div>
                   <div class="card-body text-center">
-
-
                     <main class="stepline">
                         @foreach ($approval->step_approvals as $steps)
                             <div class="item">

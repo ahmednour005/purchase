@@ -40,7 +40,12 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-md-6">
-            <h1 >Add Cycle Approval</h1>
+              @if($data)
+              <h1 >Update Cycle Approval</h1>
+              @else
+              <h1 >Add Cycle Approval</h1>
+              @endif
+
           </div>
           <div class="col-md-6">
             <ol class="breadcrumb float-sm-right">
@@ -59,25 +64,72 @@
         <div class="row">
                     @if($data)
                     <div class="col-md-12">
-                        <div class="add-service">
-                            <form action="{{route('main_group.update',$data->id )}}" method="Post">
+                        <div class="card prequest ">
+                            <div class="card-header parent">
+                                <h5>Update Cycle Approval</h5>
+                            </div>
+                           <div class="add-service">
+                            <form action="{{route('approvals.update',$data->id)}}" method="POST" >
                                 @csrf
                                 <div class="form-group">
-                                    <label for="Add Service ">@lang('site.edit_mainGroup') </label>
-                                    <input type="text" name="group_name" value="{{$data->group_name}}" class="form-control" required="" oninvalid="this.setCustomValidity('@lang('site.check_service')')"  oninput="setCustomValidity('')" >
+                                    <label for="Add Service"> الأسم  </label>
+                                    <input type="text" name="approval_name" value="{{old('approval_name', $data->approval_name)}}" class="form-control" required="" oninvalid="this.setCustomValidity('@lang('site.check_service')')"  oninput="setCustomValidity('')" >
+                                </div>
+                                <div class="card" >
+                                    <div class="card-header">
+                                        تعديل مراحل الموافقات
+                                    </div>
+                                    <div class="card-body approval-steps">
+                                        <div class="row steps ">
+                                            @foreach ($data->step_approvals as $item)
+
+                                            <div class="col-sm-12 items">
+                                                <div class="row">
+                                                   <div class="col-5">
+                                                        <div class="form-group">
+                                                            <input type="text" name="steps[{{ $i }}][step_name]"
+                                                            value="{{old('step_name', $item->step_name) }}" placeholder="أسم المرحلة" class="form-control" required="" oninvalid="this.setCustomValidity('@lang('site.check_service')')"  oninput="setCustomValidity('')" >
+                                                        </div>
+                                                   </div>
+                                                   <div class="col-5">
+                                                    <select  name="steps[{{ $i }}][][step_users]" class="form-control multi-users  js-example-basic-multiple js-states require"  multiple="multiple" oninput="this.className = 'form-control'">
+                                                        @foreach($users as $userss)
+                                                              <option value='{{$userss->id}}'
+                                                                        @foreach($item->users as $user)
+                                                                            {{ $user->id == $userss->id ? 'selected' : '' }}
+                                                                        @endforeach>{{$userss->name}}</option>
+                                                        @endforeach
+                                                    </select>
+                                                   </div>
+                                                    <div class="col-2 ">
+                                                        <button type="button" class="btn btn-danger remove-item">حذف</button>
+                                                    </div>
+                                                </div>
+                                                <hr  >
+                                          </div>
+                                          <input type="number" hidden value="{{ $i++ }}">
+                                            @endforeach
+
+                                        </div>
+                                        <div class="form-group">
+                                            <button type="button" class="btn btn-success add-new-row" >أضافة</button>
+                                        </div>
+
+                                    </div>
                                 </div>
                                 <div class="form-group">
                                     {{ method_field('PUT') }}
-                                    <input type="submit"  class="btn btn-success" value="@lang('site.edit')">
+                                    <input type="submit"  class="btn btn-success" value="Update">
                                 </div>
                             </form>
-                        </div>
+                         </div>
                     </div>
+
 
                     @else
 
                     <div class="col-md-12">
-                        <div class="card prequest ">
+                        <div class="card prequest add-approval  ">
                             <div class="card-header parent">
                                 <h5>Create New Cycle Approval</h5>
                             </div>
@@ -190,52 +242,106 @@
         placeholder: "اختر المسئول عن الموافقة"
     });
 
-var index = 0;
-var key=1;
-   $('.approval-steps .remove-item').hide();
-    $('.approval-steps').on('click','.add-new-row', function() {
 
-        index++;
+    @if($data)
+
+    var index = 0;
+    var key={{ $data_count+1 }};
         var count =$('.approval-steps .items').length+1;
-
         if(count>1){
             $('.approval-steps .remove-item').show();
         }
-       var new_item = `
+        $('.add-approval .approval-steps .remove-item').hide();
 
-                <div class="col-sm-12 items">
+        $('.approval-steps').on('click','.add-new-row', function() {
+            index++;
+            var count =$('.approval-steps .items').length+1;
+            if(count>1){
+                $('.approval-steps .remove-item').show();
+            }
 
-                        <div class="row">
-                        <div class="col-5">
-                                <div class="form-group">
-                                    <input type="text" name=${"steps["+key+"][step_name]"} value=""  placeholder="أسم المرحلة"class="form-control" required="" oninvalid="this.setCustomValidity('@lang('site.check_service')')"  oninput="setCustomValidity('')" >
-                                </div>
-                        </div>
-                        <div class="col-5">
-                            <select  name="${"steps["+key+"][][step_users]"}" class="form-control multi-users${index}  js-example-basic-multiple js-states require"  multiple="multiple" oninput="this.className = 'form-control'">
-                                @foreach($users as $user)
-                                    <option value='{{$user->id}}'>{{$user->name}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                            <div class="col-2 ">
-                                <button type="button" class="btn btn-danger remove-item">حذف</button>
+           var new_item = `
+                    <div class="col-sm-12 items">
+                            <div class="row">
+                            <div class="col-5">
+                                    <div class="form-group">
+                                        <input type="text" name=${"steps["+key+"][step_name]"} value=""  placeholder="أسم المرحلة"class="form-control" required="" oninvalid="this.setCustomValidity('@lang('site.check_service')')"  oninput="setCustomValidity('')" >
+                                    </div>
                             </div>
-                        </div>
-                        <hr>
-                </div>
+                            <div class="col-5">
+                                <select  name="${"steps["+key+"][][step_users]"}" class="form-control multi-users${index}  js-example-basic-multiple js-states require"  multiple="multiple" oninput="this.className = 'form-control'">
+                                    @foreach($users as $user)
+                                        <option value='{{$user->id}}'>{{$user->name}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                                <div class="col-2 ">
+                                    <button type="button" class="btn btn-danger remove-item">حذف</button>
+                                </div>
+                            </div>
+                            <hr>
+                    </div>
+                   `;
 
-               `;
+           $(".approval-steps .steps").append(new_item);
+           $('.multi-users'+index).select2();
+           $(".multi-users"+index).select2({
+               placeholder: "اختر المسئول عن الموافقة"
+           });
+           key++;
+        });
+
+    @else
 
 
+    var index = 0;
+    var key=1;
+        var count =$('.approval-steps .items').length+1;
+        if(count>1){
+            $('.approval-steps .remove-item').show();
+        }
+        $('.add-approval .approval-steps .remove-item').hide();
 
-       $(".approval-steps .steps").append(new_item);
-       $('.multi-users'+index).select2();
-       $(".multi-users"+index).select2({
-           placeholder: "اختر المسئول عن الموافقة"
-       });
-       key++;
-    });
+        $('.approval-steps').on('click','.add-new-row', function() {
+            index++;
+            var count =$('.approval-steps .items').length+1;
+            if(count>1){
+                $('.approval-steps .remove-item').show();
+            }
+
+           var new_item = `
+                    <div class="col-sm-12 items">
+                            <div class="row">
+                            <div class="col-5">
+                                    <div class="form-group">
+                                        <input type="text" name=${"steps["+key+"][step_name]"} value=""  placeholder="أسم المرحلة"class="form-control" required="" oninvalid="this.setCustomValidity('@lang('site.check_service')')"  oninput="setCustomValidity('')" >
+                                    </div>
+                            </div>
+                            <div class="col-5">
+                                <select  name="${"steps["+key+"][][step_users]"}" class="form-control multi-users${index}  js-example-basic-multiple js-states require"  multiple="multiple" oninput="this.className = 'form-control'">
+                                    @foreach($users as $user)
+                                        <option value='{{$user->id}}'>{{$user->name}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                                <div class="col-2 ">
+                                    <button type="button" class="btn btn-danger remove-item">حذف</button>
+                                </div>
+                            </div>
+                            <hr>
+                    </div>
+                   `;
+
+           $(".approval-steps .steps").append(new_item);
+           $('.multi-users'+index).select2();
+           $(".multi-users"+index).select2({
+               placeholder: "اختر المسئول عن الموافقة"
+           });
+           key++;
+        });
+
+
+    @endif
 
     $('.approval-steps').on('click','.remove-item', function() {
         var count =$('.approval-steps .items').length;

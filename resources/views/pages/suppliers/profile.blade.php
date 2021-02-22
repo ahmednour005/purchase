@@ -208,11 +208,10 @@
                    <div class="tab-pane" id="persons">
 
                        <div class="timeline timeline-inverse person-info">
-                           <!-- timeline time label -->
+
                            <div class="time-label">
                                <span class="bg-danger">
                                    <i class="fas fa-users"></i> @lang('site.responsible_person') ({{$preson_count}})
-
                                </span>
                            </div>
 
