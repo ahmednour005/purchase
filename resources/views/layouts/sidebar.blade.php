@@ -193,7 +193,8 @@
                         </a>
                      </li>
                     <li class="nav-item">
-                        <a href="{{route('approvals.index')}}" class="nav-link {{ (request()->is('*approvals')) ? 'active' : '' }}">
+                        <a href="{{route('approvals.index')}}" class="nav-link {{ (request()->is('*approvals')) ||
+                            (request()->is('*approvals/*')) ? 'active' : '' }}">
                             <i class="fas fa-eye nav-icon"></i>
 
                             <p>Show Approvals </p>

@@ -34,19 +34,20 @@
     @include('layouts.navbar')
   @include('layouts.sidebar')
 
-  <!-- Content Wrapper. Contains page content -->
+
   <div class="content-wrapper">
     <div class="overlay"></div>
-    <!-- Content Header (Page header) -->
+
     <section class="content-header">
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-                All Cycle Approval
+               Show Cycle Approval
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item active">Approvals</li>
+              <li class="breadcrumb-item active">{{ $approval->approval_name }}</li>
+              <li class="breadcrumb-item"><a href="{{route('approvals.index')}}">Approvals</a></li>
               <li class="breadcrumb-item"><a href="{{route('home')}}">@lang('site.home')</a></li>
 
             </ol>
@@ -57,74 +58,31 @@
 
     <!-- Main content -->
     <section class="content" style="position: relative">
-        <div class="table_loader">
-            <svg viewBox="0 0 1350 600">
-                <text x="50%" y="50%" fill="transparent" text-anchor="middle">
-                    EEC  Group
-                </text>
 
-            </svg>
-        </div>
-
-      <div class="container-fluid">
+      <div class="container-fluid ">
         <div class="row">
-          <div class="col-12">
-            <div class="card">
-              <!-- /.card-header -->
-              <div class="card-body">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header show-approval parent">
+                        <h5>( {{ $approval->approval_name }} ) Cycle Approval</h5>
+                        <button class="btn btn-success">Edit</button>
+                    </div>
+                  <div class="card-body text-center">
 
-                <table id="example1" class="table table-bordered table-striped text-center">
-                  <thead>
-                    <tr>
-                        <th >@lang('site.actions')</th>
-                        <th width="5%" > @lang('site.id')</th>
-                        <th >Cycle Name</th>
-                        <th > Number Of Steps</th>
-                        <th > Number Of Users </th>
-                        <th > Number Of Groups </th>
-                    </tr>
-                  </thead>
-                  <tbody >
-                      @foreach ($approvals as $approval)
-                        <tr>
-                            <td class="options">
-                                <div class="option-items">
-                                    <div class="icon">
-                                        <i class="fas fa-cog"></i>
-                                    </div>
-                                    <a href="{{ route('approvals.show',$approval->id) }}" class="btn btn-success"><i class="fa fa-eye"></i></a>
-                                    <a href=""  class="btn btn-warning"> <i class="fa fa-edit "></i> </a>
-                                    <a  class="btn btn-danger" data-sup_id="lk" data-toggle="modal" data-target="#delete"> <i class="fa fa-trash-alt "></i> </a>
-                                </div>
-                            </td>
-                            <td> {{ $approval->id }} </td>
-                            <td>{{ $approval->approval_name }}</td>
-                            <td>
-                                 {{$approval->step_approvals->count() }}
-                            </td>
 
-                            <td>
-
-                                @foreach ($approval->step_approvals as $steps)
-                                 <input type="hidden" value="{{ $i += $steps->users->count() }}">
+                    <main class="stepline">
+                        @foreach ($approval->step_approvals as $steps)
+                            <div class="item">
+                                <h4>{{ $steps->step_name }}</h4>
+                                @foreach ($steps->users as $user)
+                                    <span>{{ $user->name }}</span>
                                 @endforeach
-                                {{ $i }}
-                            </td>
-                            <input type="hidden" value="{{ $i=0 }}">
-                            <td>
-                                num
-                            </td>
-                        </tr>
-                      @endforeach
-
-                    </tbody>
-                </table>
-              </div>
-
+                            </div>
+                        @endforeach
+                     </main>
+                  </div>
+                </div>
             </div>
-
-          </div>
-
         </div>
 
       </div>

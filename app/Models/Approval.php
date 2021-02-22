@@ -14,4 +14,8 @@ class Approval extends Model
     {
         return $this->hasMany('App\Models\MainGroup');
     }
+    public function step_approvals()
+    {
+        return $this->hasMany('App\Models\StepApproval');
+    }
 }

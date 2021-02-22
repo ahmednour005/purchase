@@ -922,3 +922,16 @@ background: #FFF;
     width: 83%;
     margin-top: 5px;
 }
+.show-approval.parent {
+    background: #28a745;
+    color: #fff;
+    padding: 10px 10px 5px 15px;
+}
+.show-approval.parent h5{
+    float: left;
+}
+.show-approval.parent button{
+    border: 1px solid;
+    float: right;
+    padding: 3px 10px;
+}
