@@ -93,7 +93,7 @@
                                         <i class="fas fa-cog"></i>
                                     </div>
                                     <a href="{{ route('approvals.show',$approval->id) }}" class="btn btn-success"><i class="fa fa-eye"></i></a>
-                                    <a href=""  class="btn btn-warning"> <i class="fa fa-edit "></i> </a>
+                                    <a href="{{ route('approvals.edit',$approval->id) }}"  class="btn btn-warning"> <i class="fa fa-edit "></i> </a>
                                     <a  class="btn btn-danger" data-sup_id="lk" data-toggle="modal" data-target="#delete"> <i class="fa fa-trash-alt "></i> </a>
                                 </div>
                             </td>

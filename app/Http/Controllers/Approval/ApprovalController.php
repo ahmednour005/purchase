@@ -9,6 +9,7 @@ use App\Models\User_StepApproval;
 use App\User;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 
 class ApprovalController extends Controller
 {
@@ -96,7 +97,12 @@ class ApprovalController extends Controller
      */
     public function edit($id)
     {
-        //
+        $data=Approval::find($id);
+        $users = User::all();
+        $users_count=  $users->count();
+        $i=0;
+        $data_count= Approval::find($id)->count();
+        return view('pages.approvals.add_approval',compact('users_count','data_count','i','users','data'));
     }
 
     /**
@@ -108,7 +114,39 @@ class ApprovalController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $approval = Approval::findOrFail($id);
+
+        foreach($approval->step_approvals as $app){
+           User_StepApproval::where('step_approval_id', $app->id)->delete();
+        }
+
+        StepApproval::where('approval_id',$approval->id)->delete();
+
+        $approval->update([
+            'approval_name' =>$request->approval_name,
+        ]);
+
+
+       $index = 0;
+        if($request->steps){
+            foreach ($request->steps as $step){
+                $step_approval = StepApproval::create([
+                    'approval_id'=>$approval->id,
+                    'step_name' => $step['step_name'],
+                ]);
+
+                   $index = count($step)-1;
+                      for($i=0;$i<$index;$i++){
+                            User_StepApproval::create([
+                            'user_id' =>  $step[$i]['step_users'],
+                            'step_approval_id' => $step_approval->id
+                          ]);
+                       }
+            }
+        }
+
+         Toastr::success(trans('Success Added'),trans('Success'));
+         return redirect('/approvals');
     }
 
     /**
