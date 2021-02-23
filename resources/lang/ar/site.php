@@ -73,6 +73,7 @@ return [
     'confirm_product'=>'من فضلك أضف المنتج',
     'confrim_select_service'=>'من فضلك اختر التصنيف الفرعى',
     'confrim_select_mainGroup'=>'  من فضلك اختر التصنيف الرئيسى',
+    'confrim_select_approvalCycle'=>'  من فضلك اختر دورة ',
     'add_product'=>'أضافة منتج',
     'edit_product'=>'تعديل المنتج',
     'confrim_delete_products'=>' هل أنت متاكد من حذف المنتج ؟ ',
@@ -158,6 +159,12 @@ return [
     'confrim_mainGroup'=>'هل أنت متأكد من حذف التصنيف ؟ ',
     'delete_mainGroup'=>'حذف التصنيف',
     'Groups'=>'التصنيفات',
+    
+    'add_approvalCycle'=>'إضافة دورة',
+    'approvalCycle'=>'اسم دورة الإعتماد ',
+    'edit_approvalCycle' => 'تعديل الدورة',
+
+    // confrim_select_mainGroup
 
     'all_requests' => 'جميع الطلبات',
     'no_requests' =>'لا يوجد طلبات',

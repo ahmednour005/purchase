@@ -16,6 +16,10 @@ class CreateMainGroupsTable extends Migration
         Schema::create('main_groups', function (Blueprint $table) {
             $table->id();
             $table->string('group_name');
+
+            $table->bigInteger('approval_id')->unsigned();
+            // $table->foreign('approval_cycle_id')->references('id')->on('approvals')->onDelete('cascade');
+            
             $table->timestamps();
         });
     }

@@ -53,7 +53,7 @@ class ApprovalController extends Controller
         $approval = Approval::create([
             'approval_name' =>$request->approval_name,
         ]);
-
+   
        $index = 0;
         if($request->steps){
             foreach ($request->steps as $step){

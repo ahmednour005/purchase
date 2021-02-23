@@ -161,6 +161,10 @@ return [
     'mainGrouponly'=>'Main Groups',
     'confrim_mainGroup'=>' ? Are you sure to delete Main Group ',
     'delete_mainGroup'=>'Delete Main Group',
+    
+    'add_approvalCycle'=>'Add Approval Cycle',
+    'approvalCycle'=>'Main Approval Cycle',
+    'edit_approvalCycle' => 'Edit Approval Cycle',
 
 
 
