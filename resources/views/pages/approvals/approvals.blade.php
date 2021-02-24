@@ -94,7 +94,7 @@
                                     </div>
                                     <a href="{{ route('approvals.show',$approval->id) }}" class="btn btn-success"><i class="fa fa-eye"></i></a>
                                     <a href="{{ route('approvals.edit',$approval->id) }}"  class="btn btn-warning"> <i class="fa fa-edit "></i> </a>
-                                    <a  class="btn btn-danger" data-sup_id="lk" data-toggle="modal" data-target="#delete"> <i class="fa fa-trash-alt "></i> </a>
+                                    <a  class="btn btn-danger" data-approval_id="{{ $approval->id }}" data-toggle="modal" data-target="#delete_approval"> <i class="fa fa-trash-alt "></i> </a>
                                 </div>
                             </td>
                             <td> {{ $approval->id }} </td>
@@ -102,9 +102,7 @@
                             <td>
                                  {{$approval->step_approvals->count() }}
                             </td>
-
                             <td>
-
                                 @foreach ($approval->step_approvals as $steps)
                                  <input type="hidden" value="{{ $i += $steps->users->count() }}">
                                 @endforeach
@@ -132,25 +130,25 @@
     </section>
 
   </div>
-    <div class="modal fade text-center" id="delete" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" dir="rtl" >
+    <div class="modal fade text-center" id="delete_approval" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" dir="rtl" >
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle"> @lang('site.archive_supplier')</h5>
+                    <h5 class="modal-title" id="exampleModalLongTitle"> حذف دورة الأعتماد  </h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>@lang('site.confirm_archive')</p>
+                    <p>هل أنت متأكد من حذف دورة الأعتماد ؟ </p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-dark" data-dismiss="modal"> @lang('site.no') , @lang('site.cancel')</button>
-                    <form action="{{route('supplier.sup_archive', ['id' => 'test'])}}" method="POST">
+                    <form action="{{route('approvals.destroy', ['approval' => 'delete'])}}" method="POST">
                         @method('DELETE')
                         @csrf
-                        <input type="hidden" name="sup_id" id="sup_id" value="">
-                        <button  type="submit" class="btn btn-outline-dark"> @lang('site.yes') , @lang('site.archive') </button>
+                        <input type="hidden" name="approval_id" id="approval_id" value="">
+                        <button  type="submit" class="btn btn-outline-dark"> @lang('site.yes') , @lang('site.delete') </button>
                     </form>
 
                 </div>
@@ -237,16 +235,12 @@
   });
 </script>
 <script>
-    $('#delete').on('show.bs.modal',function(event){
+    $('#delete_approval').on('show.bs.modal',function(event){
          var button = $(event.relatedTarget);
-         var supid = button.data('sup_id');
-         $('.modal #sup_id').val(supid);
+         var approvalId = button.data('approval_id');
+         $('.modal #approval_id').val(approvalId);
     })
-    $('#restore').on('show.bs.modal',function(event){
-        var button = $(event.relatedTarget);
-        var supid = button.data('sup_id');
-        $('.modal #sup_id').val(supid);
-    })
+
 
 </script>
 <script src="http://cdn.bootcss.com/toastr.js/latest/js/toastr.min.js"></script>
