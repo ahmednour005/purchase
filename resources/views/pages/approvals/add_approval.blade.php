@@ -88,7 +88,7 @@
                                                    <div class="col-5">
                                                         <div class="form-group">
                                                             <input type="text" name="steps[{{ $i }}][step_name]"
-                                                            value="{{old('step_name', $item->step_name) }}" placeholder="أسم المرحلة" class="form-control" required="" oninvalid="this.setCustomValidity('@lang('site.check_service')')"  oninput="setCustomValidity('')" >
+                                                            value="{{old('step_name', $item->step_name) }}" placeholder="أسم المرحلة" class="form-control" required="" oninvalid="this.setCustomValidity('من فضلك ادخل المرحلة')"  oninput="setCustomValidity('')" >
                                                         </div>
                                                    </div>
                                                    <div class="col-5">
@@ -150,11 +150,12 @@
                                                 <div class="row">
                                                    <div class="col-5">
                                                         <div class="form-group">
-                                                            <input type="text" name="steps[0][step_name]" value="" placeholder="أسم المرحلة" class="form-control" required="" oninvalid="this.setCustomValidity('@lang('site.check_service')')"  oninput="setCustomValidity('')" >
+                                                            <input type="text" name="steps[0][step_name]" value="" placeholder="أسم المرحلة" class="form-control" required="" oninvalid="this.setCustomValidity('من فضلك ادخل المرحلة')"  oninput="setCustomValidity('')" >
                                                         </div>
                                                    </div>
                                                    <div class="col-5">
-                                                    <select  name="steps[0][][step_users]" class="form-control multi-users  js-example-basic-multiple js-states require"  multiple="multiple" oninput="this.className = 'form-control'">
+                                                    <select  name="steps[0][][step_users]" class="form-control multi-users  js-example-basic-multiple js-states require"  multiple="multiple"
+                                                    oninput="this.className = 'form-control'" >
                                                         @foreach($users as $user)
                                                             <option value='{{$user->id}}'>{{$user->name}}</option>
                                                         @endforeach
@@ -265,7 +266,7 @@
                             <div class="row">
                             <div class="col-5">
                                     <div class="form-group">
-                                        <input type="text" name=${"steps["+key+"][step_name]"} value=""  placeholder="أسم المرحلة"class="form-control" required="" oninvalid="this.setCustomValidity('@lang('site.check_service')')"  oninput="setCustomValidity('')" >
+                                        <input type="text" name=${"steps["+key+"][step_name]"} value=""  placeholder="أسم المرحلة"class="form-control" required="" oninvalid="this.setCustomValidity('من فضلك ادخل المرحلة')"  oninput="setCustomValidity('')" >
                                     </div>
                             </div>
                             <div class="col-5">
@@ -314,7 +315,7 @@
                             <div class="row">
                             <div class="col-5">
                                     <div class="form-group">
-                                        <input type="text" name=${"steps["+key+"][step_name]"} value=""  placeholder="أسم المرحلة"class="form-control" required="" oninvalid="this.setCustomValidity('@lang('site.check_service')')"  oninput="setCustomValidity('')" >
+                                        <input type="text" name=${"steps["+key+"][step_name]"} value=""  placeholder="أسم المرحلة"class="form-control" required="" oninvalid="this.setCustomValidity('من فضلك ادخل المرحلة')"  oninput="setCustomValidity('')" >
                                     </div>
                             </div>
                             <div class="col-5">

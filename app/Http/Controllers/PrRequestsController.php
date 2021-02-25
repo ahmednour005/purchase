@@ -275,7 +275,8 @@ class PrRequestsController extends Controller
                 $user_id[] = $user->id; 
                 $user_name[] = $user->name; 
                 $user_jobtitle[] = $user->job_title;
-        // } else if (in_array($prrequest->approval_id, [3,4])) {
+        }
+         //else if (in_array($prrequest->approval_id, [3,4])) {
         //     $column = 'cfo_id';
         //     $users  = Role::find(4)->users->pluck('id');
         //     $status = 5;

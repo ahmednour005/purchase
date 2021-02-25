@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Approval;
 
+use App\Charts\Requests;
 use App\Http\Controllers\Controller;
 use App\Models\Approval;
 use App\Models\StepApproval;
@@ -10,6 +11,7 @@ use App\User;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\DB;
 
 class ApprovalController extends Controller
 {
@@ -24,8 +26,6 @@ class ApprovalController extends Controller
         $users_count=  User::count();
         $approvals = Approval::all();
         $i=0;
-
-        // return $approval;
         return view('pages.approvals.approvals',compact('i','users_count','users','approvals'));
     }
 
@@ -53,7 +53,7 @@ class ApprovalController extends Controller
         $approval = Approval::create([
             'approval_name' =>$request->approval_name,
         ]);
-   
+
        $index = 0;
        $step_number =1;
         if($request->steps){
@@ -161,8 +161,27 @@ class ApprovalController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        $data = Approval::findOrFail($request->approval_id);
+
+
+        $check_approval = DB::table('main_groups')->where('approval_id', $request->approval_id)->value('approval_id');
+
+
+
+        if($check_approval){
+            Toastr::error('لا يمكن الحذف لإرتباطه بتصنيف ',trans("site.sorry"));
+            return redirect('/approvals');
+        }else
+        {
+            foreach($data->step_approvals as $app){
+                User_StepApproval::where('step_approval_id', $app->id)->delete();
+             }
+             $data->delete();
+            Toastr::success('تم حذف دورة الأعتماد بنجاح ',trans("site.success"));
+            return redirect('/approvals');
+        }
+
     }
 }
