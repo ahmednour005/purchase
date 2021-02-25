@@ -17,8 +17,6 @@
     </div><!-- /.container-fluid -->
   </section>
 <div class="card">
-   
-
         <div class="card-body">
         <div class="table-responsive" >
             <table id="example1" class="table table-bordered table-striped" >
@@ -42,6 +40,9 @@
                         <th>
                             Request Number
                         </th>
+                        <th>
+                            Status
+                        </th>
                         <th width="150px">
 
                             Actions
@@ -51,8 +52,6 @@
                 <tbody>
                     @foreach($prrequests as $key => $prrequest)
                         <tr class="justify-content-center" data-entry-id="{{ $prrequest->id }}">
-
-
                             <td>
                                 {{ $prrequest->date}}
                             </td>
@@ -78,8 +77,30 @@
                             <td>
                                 {{ $prrequest->request_number ?? '' }}
                             </td>
+                            <td>
+                                {{ $user->is_user && $prrequest->approval_id < 3 ? $defaultStatus->approval_name : $prrequest->approval->approval_name }}
+                            </td>
                             <td class="requests-btn">
-                                <a class="btn btn-sm btn-success" href="{{ route('requests.show', $prrequest->id) }}">
+                                @if($user->is_admin || in_array($prrequest->approval_id, [1]))
+                                <a class="btn btn-xs btn-success" href="{{ route('requests.showSend', $prrequest->id) }}">
+                                    Send to
+                                    @if($prrequest->approval_id == 1)
+                                    {{$prrequest->mainGroup->approval->approval_name}}
+                                     {{-- @foreach($prrequest->mainGroup->approval->stepapprovals as $approv)
+                                        @foreach ($approv->users as $user)
+                                           {{$user->name}}
+                                        @endforeach
+                                     @endforeach --}}
+                                    @else
+                                        CFO
+                                    @endif
+                                </a>
+                                {{-- @elseif(($user->is_analyst && $loanApplication->status_id == 2) || ($user->is_cfo && $loanApplication->status_id == 5))
+                                    <a class="btn btn-xs btn-success" href="{{ route('admin.loan-applications.showAnalyze', $loanApplication->id) }}">
+                                        Submit analysis
+                                    </a> --}}
+                                @endif
+                                <a class="btn btn-sm btn-info" href="{{ route('requests.show', $prrequest->id) }}">
                                     view
                                 </a>
                                 <a class="btn btn-sm btn-warning" href="{{ route('requests.edit', $prrequest->id) }}">
@@ -88,7 +109,7 @@
                                 <form action="{{ route('requests.destroy', $prrequest->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
                                     <input type="hidden" name="_method" value="DELETE">
                                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                    {{-- <button type="submit" class="btn btn-sm btn-danger">Delete</button> --}}
                                 </form>
                             </td>
                         </tr>

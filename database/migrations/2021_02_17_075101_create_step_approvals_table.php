@@ -18,6 +18,7 @@ class CreateStepApprovalsTable extends Migration
             $table->bigInteger('approval_id')->unsigned();
             $table->foreign('approval_id')->references('id')->on('approvals')->onDelete('cascade');
             $table->string('step_name');
+           
             
             $table->timestamps();
         });

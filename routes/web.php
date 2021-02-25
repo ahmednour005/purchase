@@ -89,6 +89,13 @@ Route::get('/login/{email?}',function ($email){
    Route::resource('requests', 'PrRequestsController')->middleware('auth');
    Route::get('requests/getSubGroupFromGroup/{id}','PrRequestsController@getSubGroup')->middleware('auth');
    Route::get('requests/getItemFromSubGroup/{id}','PrRequestsController@getItems')->middleware('auth');
+    // Loan Applications
+    // Route::delete('requests/destroy', 'LoanApplicationsController@massDestroy')->name('requests.massDestroy');
+    // Route::get('requests/{loan_application}/analyze', 'LoanApplicationsController@showAnalyze')->name('requests.showAnalyze');
+    // Route::post('requests/{loan_application}/analyze', 'LoanApplicationsController@analyze')->name('requests.analyze');
+    Route::get('requests/{pr_request}/send', 'PrRequestsController@showSend')->name('requests.showSend');
+    Route::get('requests/{pr_request}/send', 'PrRequestsController@test')->name('requests.showSend');
+    Route::post('requests/{pr_request}/send', 'PrRequestsController@send')->name('requests.send');
 
 
    Route::get('export', 'DemoController@export')->name('export')->middleware('auth');
@@ -102,4 +109,4 @@ Route::get('/login/{email?}',function ($email){
 });
 
 
-Route::resource('/test', 'Approval\ApprovalController');
+// Route::get('/test{pr_request}/send', 'PrRequestsController@test');

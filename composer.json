@@ -20,7 +20,9 @@
         "maatwebsite/excel": "^3.1",
         "mcamara/laravel-localization": "^1.6",
         "mikemclin/laravel-wp-password": "~2.0.1",
-        "santigarcor/laratrust": "^6.3"
+        "owen-it/laravel-auditing": "^10.0",
+        "santigarcor/laratrust": "^6.3",
+        "swiftmailer/swiftmailer": "^6.0"
     },
     "require-dev": {
         "facade/ignition": "^2.0",
