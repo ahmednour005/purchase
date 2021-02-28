@@ -30,7 +30,7 @@ class PrRequestsController extends Controller
         $prrequests = PrRequest::with('requestitems', 'approval')->get();
         // dd($prrequests);
         // $totalBudget = PrRequest::prrequest()->requestitems->totalbudget;
-        $defaultStatus = Approval::find(0);
+        $defaultStatus = Approval::where('approval_name','Pending')->first();
         $user = auth()->user();
         $users = User::all();
         $users_count=  $users->count();
@@ -91,7 +91,9 @@ class PrRequestsController extends Controller
             $requestnumber = $request->user_location.'-'.date('Y').'-'.$newRow;
         }
 
-        $defaultStatus = Approval::find(0);
+        // $defaultStatus = Approval::find(0);
+        $processingStatus = Approval::where('approval_name','Pending')->first();
+
 
         $prrequest = PrRequest::create([
             'date' => $request->date,
@@ -103,7 +105,7 @@ class PrRequestsController extends Controller
             'user_location' => $request->user_location,
             'user_id' => Auth::id(),
             'userstep_id' => Auth::id(),
-            'approval_id' => $defaultStatus,
+            'approval_id' => $processingStatus,
             'stepapproval_id' => 1,
         ]);
 
@@ -193,7 +195,7 @@ class PrRequestsController extends Controller
         // }
         // dd($laststepnumber);
 
-        $defaultStatus = Approval::find(0);
+        $defaultStatus = Approval::where('approval_name','Pending')->first();
 
         $users = User::all();
         $users_count=  $users->count();
@@ -201,7 +203,26 @@ class PrRequestsController extends Controller
         // dd($user);
 
         $indexCount =1;
-        return view('pages.requests.show', compact('prrequest', 'requestitems', 'defaultStatus', 'user','indexCount','users_count'));
+
+        // $currentapproval_id = $prrequest->approval_id;
+        // $currentstep_id = $prrequest->stepapproval_id;
+        $currentapproval = Approval::find($prrequest->approval_id); 
+        $currentstep = $currentapproval->stepapprovals->find($currentapproval); 
+        
+        // Next ID 
+        $next_id = $currentapproval->stepapprovals->where('id','>',$currentstep->id)->min('id');
+        $nextstep = $currentapproval->stepapprovals->find($next_id); 
+
+        // Previous ID
+        $prev_id = $currentapproval->stepapprovals->where('id','<',$currentstep->id)->max('id');
+        $prevstep = $currentapproval->stepapprovals->find($prev_id); 
+        // Last Step
+        $laststep = $currentapproval->stepapprovals->last();  
+        
+        // dd($currentstep);
+        // dd($currentapproval);
+        
+        return view('pages.requests.show', compact('prrequest', 'requestitems', 'nextstep','defaultStatus', 'user','indexCount','users_count'));
     }
 
     /**
@@ -265,6 +286,8 @@ class PrRequestsController extends Controller
         //     abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
         }
 
+        
+
         return view('pages.requests.send', compact('prrequest', 'stepname', 'users','user_id','user_name','job_title'));
     }
 
@@ -273,29 +296,43 @@ class PrRequestsController extends Controller
         // abort_if(!auth()->user()->is_admin, Response::HTTP_FORBIDDEN, '403 Forbidden');
         
         // $status = Approval::where('approval_name','Pending')->first();
+        $approval_id = $prrequest->mainGroup->approval->id;
+
+        $currentapproval = Approval::find($prrequest->approval_id); 
+        $currentstep = $currentapproval->stepapprovals->find($currentapproval);
+        // Next ID 
+        $next_id = $currentapproval->stepapprovals->where('id','>',$currentstep->id)->min('id');
+        $nextstep = $currentapproval->stepapprovals->find($next_id); 
+
+        // Previous ID
+        $prev_id = $currentapproval->stepapprovals->where('id','<',$currentstep->id)->max('id');
+        $prevstep = $currentapproval->stepapprovals->find($prev_id); 
+        // Last Step
+        $laststep = $currentapproval->stepapprovals->last();
 
         if ($prrequest->approval_id == 1) {
-            $approval_id = $prrequest->mainGroup->approval->id;
             $stepname = $prrequest->mainGroup->approval->stepapprovals->pluck('step_name')->first();
             $step_id = $prrequest->mainGroup->approval->stepapprovals->pluck('id')->first();
             $step = $prrequest->mainGroup->approval->stepapprovals->first();
             $users = $step->users;
             $column = 'userstep_id';
-            $user_id = array();
-            $user_name = array();
-            $user_jobtitle = array();
-            foreach($users as $user) {
-                $user_id[] = $user->id; 
-                $user_name[] = $user->name; 
-                $user_jobtitle[] = $user->job_title;
+            // $user_id = array();
+            // $user_name = array();
+            // $user_jobtitle = array();
+            // foreach($users as $user) {
+            //     $user_id[] = $user->id; 
+            //     $user_name[] = $user->name; 
+            //     $user_jobtitle[] = $user->job_title;
         }
-         //else if (in_array($prrequest->approval_id, [3,4])) {
-        //     $column = 'cfo_id';
-        //     $users  = Role::find(4)->users->pluck('id');
-        //     $status = 5;
-        // } else {
+         else if (!in_array($prrequest->approval_id, [1]) && !$laststep) {
+            $column = 'userstep_id';
+            $step_id = $next_id;
+            $users  = $nextstep->users->pluck('id');
+            // $status = ;
+        } 
+        // else {
         //     abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
-        }
+        // }
 
         // $request->validate([
         //     'user_id' => 'required|in:' . $users->implode(',')
@@ -329,7 +366,10 @@ class PrRequestsController extends Controller
     {
         $user = auth()->user();
 
-        if ($user->is_analyst && $loanApplication->status_id != 1) {
+        if ($prrequest->approval_id != 1) {
+            $currentapproval_id = $prrequest->approval_id;
+            $currentstep_id = $prrequest->stepapproval_id;
+            $currentstep_name = $prrequest->approval->stepapprovals->find($currentstep_id)->step_name;
             $status = $request->has('approve') ? 3 : 4;
         } 
         // else if ($user->is_cfo && $loanApplication->status_id == 5) {
