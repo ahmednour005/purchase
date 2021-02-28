@@ -100,10 +100,14 @@
                             <td> {{ $approval->id }} </td>
                             <td>{{ $approval->approval_name }}</td>
                             <td>
-                                 {{$approval->step_approvals->count() }}
+                                 {{$approval->stepapprovals->count() }}
                             </td>
                             <td>
+<<<<<<< HEAD
+                                @foreach ($approval->stepapprovals as $steps)
+=======
                                 @foreach ($approval->step_approvals as $steps)
+>>>>>>> 7abc716a904a6397531772717585549fc984d37a
                                  <input type="hidden" value="{{ $i += $steps->users->count() }}">
                                 @endforeach
                                 {{ $i }}

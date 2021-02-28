@@ -7,11 +7,16 @@ use App\Models\PrRequest;
 use App\Models\RequestItem;
 use App\Models\Product;
 use App\Models\Service;
+use App\Models\Approval;
+use App\Models\StepApproval;
+use Brian2694\Toastr\Facades\Toastr;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\User;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\Response;
+
 
 class PrRequestsController extends Controller
 {
@@ -22,12 +27,15 @@ class PrRequestsController extends Controller
      */
     public function index()
     {
-        $prrequests = PrRequest::with('requestitems')->get();
+        $prrequests = PrRequest::with('requestitems', 'approval')->get();
         // dd($prrequests);
         // $totalBudget = PrRequest::prrequest()->requestitems->totalbudget;
+        $defaultStatus = Approval::find(0);
+        $user = auth()->user();
         $users = User::all();
         $users_count=  $users->count();
-        return view('pages.requests.index', compact('prrequests','users_count'));
+        // dd($defaultStatus);
+        return view('pages.requests.index', compact('prrequests', 'defaultStatus', 'user','users_count'));
     }
 
 
@@ -92,7 +100,7 @@ class PrRequestsController extends Controller
             'project' => $request->project,
             'site' => $request->site,
             'user_location' => $request->user_location,
-            'user_id' => Auth::id(),
+            'created_by' => Auth::id(),
         ]);
 
 
@@ -115,7 +123,26 @@ class PrRequestsController extends Controller
             ]);
         }
 
-        return redirect()->route('requests.index')->with('message', 'Request created Successfully');
+        // For Test Relationship Purpose
+        // $status = MainGroup::find($request->main_group_id)->approval->id;
+        
+        // dd($main_group);
+
+
+        // $status = MainGroup->approval->id;
+        
+        // dd($status);
+
+        // $stepapprovals = Approval::find($status)->stepapprovals->all();
+
+        // foreach($stepapprovals as $stepapproval){
+        //     print_r ($stepapproval->step_name.'<br>');
+        //     dd($stepapproval->step_name);
+        // }
+        
+        // dd($stepapproval);
+
+        // return redirect()->route('requests.index')->with('message', 'Request created Successfully');
 
     }
 
@@ -130,11 +157,47 @@ class PrRequestsController extends Controller
         $prrequest = PrRequest::find($id);
 
         $requestitems = $prrequest->requestitems()->get();
+        // $step_id = PrRequest::find($id)->mainGroup->approval->stepapprovals->first();
+        $stepname = PrRequest::find($id)->mainGroup->approval->stepapprovals->pluck('step_name')->first();
+        // $laststepnumber = PrRequest::find($id)->mainGroup->approval->stepapprovals->pluck('step_number')->last();
+        // $users = $step_id->users;
+        // $arr = array();
+        // $index = 0; 
+        // foreach($users as $st){
+            // echo "<pre>";
+            // $arr[] = $st->id;
+            // print_r($st->name);
+            // echo "</pre>";
+            // $index++;
+        // }
+
+        // dd($stepname);
+        // for ($i=0; $i < count($arr) ; $i++) { 
+        //     echo "<pre>";
+        //         $arr[$i];
+        //     // print_r($st->name);
+        //     echo "</pre>";
+        // }
+        // $stepapproval = StepApproval::find($stepnumber)->get();
+        // dd($stepapproval);
+
+        // foreach($stepapproval as $approv){
+            // foreach($prrequest->mainGroup->approval->stepapprovals as $approv){
+        //     foreach ($approv->users as $user) {
+        //         echo $user->name;
+        //     }$
+        // }
+        // dd($laststepnumber);
+
+        $defaultStatus = Approval::find(0);
 
         $users = User::all();
         $users_count=  $users->count();
+        $user = auth()->user();
+        // dd($user);
+
         $indexCount =1;
-        return view('pages.requests.show', compact('prrequest', 'requestitems','indexCount','users_count'));
+        return view('pages.requests.show', compact('prrequest', 'requestitems', 'defaultStatus', 'user','indexCount','users_count'));
     }
 
     /**
@@ -170,6 +233,81 @@ class PrRequestsController extends Controller
     {
         //
     }
+
+    public function showSend(PrRequest $prrequest)
+    {
+        // abort_if(!auth()->user()->is_admin, Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        if ($prrequest->approval_id == 1) {
+            $stepname = $prrequest->mainGroup->approval->stepapprovals->pluck('step_name')->first();
+            $step = $prrequest->mainGroup->approval->stepapprovals->first();
+            $users = $step->users;
+            // $column = 'user_id';
+            // $user_id = array();
+            // $user_name = array();
+            // $user_jobtitle = array();
+            // foreach($users as $user) {
+            //     $user_id[] = $user->id; 
+            //     $user_name[] = $user->name; 
+            //     $user_jobtitle[] = $user->job_title; 
+            // } 
+            
+            // $users = $prrequest->mainGroup->approval->stepapprovals->users->pluck('name', 'id', 'job_title');
+        // } else if (!in_array($prrequest->approval_id, [3,4])) {
+        //     // $role = 'CFO';
+        //     // $users = Role::find(4)->users->pluck('name', 'id');
+        //     $users = $prrequest->mainGroup->approval->stepapprovals->users->pluck('name', 'id', 'job_title');
+        // } else {
+        //     abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
+        }
+
+        return view('pages.requests.send', compact('prrequest', 'stepname', 'users','user_id','user_name','job_title'));
+    }
+
+    public function send(Request $request, PrRequest $prrequest)
+    {
+        // abort_if(!auth()->user()->is_admin, Response::HTTP_FORBIDDEN, '403 Forbidden');
+        
+        // $status = Approval::where('approval_name','Pending')->first();
+
+        if ($prrequest->approval_id == 1) {
+            $approval_id = $prrequest->mainGroup->approval->id;
+            $stepname = $prrequest->mainGroup->approval->stepapprovals->pluck('step_name')->first();
+            $step_id = $prrequest->mainGroup->approval->stepapprovals->pluck('id')->first();
+            $step = $prrequest->mainGroup->approval->stepapprovals->first();
+            $users = $step->users;
+            $column = 'userstep_id';
+            $user_id = array();
+            $user_name = array();
+            $user_jobtitle = array();
+            foreach($users as $user) {
+                $user_id[] = $user->id; 
+                $user_name[] = $user->name; 
+                $user_jobtitle[] = $user->job_title;
+        }
+         //else if (in_array($prrequest->approval_id, [3,4])) {
+        //     $column = 'cfo_id';
+        //     $users  = Role::find(4)->users->pluck('id');
+        //     $status = 5;
+        // } else {
+        //     abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
+        }
+
+        // $request->validate([
+        //     'user_id' => 'required|in:' . $users->implode(',')
+        // ]);
+
+        $prrequest->update([
+            $column => $request->user_id,
+            'approval_id' => $approval_id,
+            'stepapproval_id' => $step_id,
+        ]);
+
+        Toastr::success('suceess','Purchase Request has been sent for'.$stepname);
+
+        return redirect()->route('requests.index')->with('message', 'Purchase Request has been sent for step_name');
+    }
+
 
 
 }

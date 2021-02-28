@@ -2,10 +2,15 @@
 
 namespace App\Models;
 
+use App\Observers\PrRequestObserver;
 use Illuminate\Database\Eloquent\Model;
+// use OwenIt\Auditing\Contracts\Auditable;
 
-class PrRequest extends Model
+
+class PrRequest extends Model 
 {
+    // use \OwenIt\Auditing\Auditable;
+
     protected $fillable = [
         'date',
         'request_number',
@@ -15,7 +20,25 @@ class PrRequest extends Model
         'main_group_id',
         'user_location',
         'user_id',
+        'userstep_id',
+        'approval_id',
+        'stepapproval_id',
     ];
+
+    /**
+     * Attributes to include in the Audit.
+     *
+     * @var array
+     */
+    protected $auditInclude = [
+        'title',
+        'content',
+    ];
+
+    protected static function booted()
+    {
+        self::observe(PrRequestObserver::class);
+    }
 
     public function requestitems(){
         return $this->hasMany('App\Models\RequestItem');
@@ -28,5 +51,10 @@ class PrRequest extends Model
     public function mainGroup()
     {
         return $this->belongsTo('App\Models\MainGroup');
+    }
+
+    public function approval()
+    {
+        return $this->belongsTo('App\Models\Approval', 'approval_id');
     }
 }

@@ -99,7 +99,7 @@
                         <label class="input-group-text" for="productOrServiceGroup">Group</label>
                       </div>
                       <select name="main_group_id" class="custom-select " id="productOrServiceGroup">
-                        <option  ></option>
+                        <option value="">Choose..</option>
                         @foreach ($groups as $group)
                           <option value="{{ $group->id }}">{{ $group->group_name }}</option>
                         @endforeach
@@ -114,10 +114,10 @@
                     <h5>
                         Items
                     </h5>
-
                 </div>
 
                 <div class="card-body">
+
                         <div id="items_table" class="table">
                             @foreach (old('items', ['']) as $index => $oldProduct)
                             <div id="item" class="tr">
@@ -143,15 +143,10 @@
                                                 </select>
                                                 <div class="invalid-feedback">Please fill out this field.</div>
                                             </div>
-                                            <div><input type="hidden" name="items[]" value="h"></div>
-
+                                            <div><input type="hidden" name="items[]" value="hidden"></div>
                                             <div class="col-md-4">
-                                                <select name="piroirtys[]" class="form-control piroirty" id="piroirty" placeholder="Chosse Currncy">
-                                                    <option>Pirority...</option>
-                                                    <option value="low">Low (more than 1 week)</option>
-                                                    <option value="medium">Medium (within 7 days)</option>
-                                                    <option value="high">High (within 3 days)</option>
-                                                </select>
+                                                <input type="number" name="qtreqtopurs[]" placeholder="Qt required to purchase..." class="form-control qrtp" id="qrtp" value="{{ old('qtreqtopurs.' . $index) ?? '' }}"/>
+                                                <div class="invalid-feedback">Please fill out this field.</div>
                                             </div>
                                         </div>
                                         <div class="form-row mx-0" >
@@ -163,6 +158,22 @@
                                             </div>
                                             <div class="col-md-8 no-gutters">
                                                 <div class="form-row mb-1 no-gutters">
+                                                    <div class="col-md-6">
+                                                        <input type="number" name="qtonstores[]" placeholder="Qt On Store..." class="form-control qos" value="{{ old('qtonstores.' . $index) ?? '' }}"/>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <input type="number" name="acqtreqtopurs[]" placeholder="Actually Qt required to purchase..." class="form-control aqrtp" value="{{ old('acqtreqtopurs.' . $index) ?? '' }}" readonly/>
+                                                    </div>
+                                                </div>
+                                                <div class="form-row">
+                                                    <div class="col-md-6">
+                                                        <select name="piroirtys[]" class="form-control piroirty" id="piroirty" placeholder="Chosse Currncy">
+                                                            <option>Pirority...</option>
+                                                            <option value="low">Low (more than 1 week)</option>
+                                                            <option value="medium">Medium (within 7 days)</option>
+                                                            <option value="high">High (within 3 days)</option>
+                                                        </select>
+                                                    </div>
                                                     <div class="col-md-6">
                                                         <select name="units[]" class="form-control unit" id="unit">
                                                             <option value="">Units...</option>
@@ -180,29 +191,19 @@
                                                             <option value="شكارة">شكارة</option>
                                                         </select>
                                                     </div>
-                                                    <div class="col-md-6">
-                                                        <input type="number" name="qtreqtopurs[]" placeholder="Qt required to purchase..." class="form-control qrtp" id="qrtp" value="{{ old('qtreqtopurs.' . $index) ?? '' }}"/>
-                                                        <div class="invalid-feedback">Please fill out this field.</div>
-                                                    </div>
-                                                </div>
-                                                <div class="form-row">
-
-
-                                                    <div class="col-md-6">
-                                                        <input type="number" name="qtonstores[]" placeholder="Qt On Store..." class="form-control qos" value="{{ old('qtonstores.' . $index) ?? '' }}"/>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <input type="number" name="acqtreqtopurs[]" placeholder="Actually Qt required to purchase..." class="form-control aqrtp" value="{{ old('acqtreqtopurs.' . $index) ?? '' }}" readonly/>
-                                                    </div>
                                                 </div>
                                             </div>
+
                                         </div>
                                 </div>
                                 <div class="col-md-1">
-                                    <div class="row-form mt-4 mb-2">
+                                    <div class="row-form mt-2 mb-1">
                                         <button type="button" id='edit_row' class=" rounded-pill btn btn-warning btn-sm">Edit</button>
                                     </div>
-                                    <div class="row-form">
+                                    <div class="row-form mb-1">
+                                        <button type="button" id='copy_row' class="rounded-pill btn btn-info btn-sm copy_row">Copy</button>
+                                    </div>
+                                    <div class="row-form ">
                                         <button type="button" id='delete_row' class="rounded-pill btn btn-danger btn-sm">Delete</button>
                                     </div>
                                 </div>
@@ -229,348 +230,473 @@
 
 @section('scripts')
 <script>
-   $(document).ready(function(){
-    Date.prototype.toDateInputValue = (function() {
-    var local = new Date(this);
-    local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
-    return local.toJSON().slice(0,10);
-    });
-
-    if ($(".tr").length <=1 ){
-        $('#delete_row').hide();
-    }
-    if ($(".tr").length <=1 ){
-        $('#edit_row').hide();
-    }
-    var indexCount = 1;
-
-    $('.productOrServiceSelect').select2();
-    $('.getSubGroup').select2();
-    $('.getSubGroup').select2({
-        placeholder: 'Choose Sub Group',
+    $(document).ready(function(){
+     Date.prototype.toDateInputValue = (function() {
+     var local = new Date(this);
+     local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+     return local.toJSON().slice(0,10);
+     });
+ 
+     
+     if ($(".tr").length <=1 ){
+         $('#delete_row').hide();
+     }
+     if ($(".tr").length <=1 ){
+         $('#edit_row').hide();
+     }
+     var indexCount = 1;
+ 
+     $('.productOrServiceSelect').select2();
+     $('.getSubGroup').select2();
+     $('.getSubGroup').select2({
+         placeholder: 'Choose Sub Group',
+          });
+ 
+     $('.Getitems').select2();
+     $('.Getitems').select2({
+         placeholder: 'Choose Item',
+          });
+ 
+ 
+     $('#date').val(new Date().toDateInputValue());
+     $('.budgetforpiece').prop('readonly', true);
+ 
+     $("#add_row").click(function(e){
+         e.preventDefault();
+ 
+         $('#delete_row').show();
+         $('#edit_row').show();
+         $('.copy_row').hide();
+         let $table = $('.table');
+         
+         
+         $table.find('.tr').first().each(function(){
+             // $(this).find('.productOrServiceSelect').select2("destroy");
+             $(this).find(".SelectProduct").removeClass('productOrServiceSelect');
+ 
+             $(this).find('.getSubGroup').select2("destroy");
+             $(this).find(".SelectProduct").removeClass('getSubGroup');
+             // }
+             // if ($(this).find(".Getitems")[0]){
+             $(this).find('.Getitems').select2("destroy");
+             $(this).find(".SelectItem").removeClass('Getitems');
+ 
+             $(this).find(".SelectProduct").removeClass('productOrServiceSelect').addClass('productOrServiceSelect');
+             $(this).find(".SelectProduct").removeClass('getSubGroup').addClass('getSubGroup');
+             $(this).find(".SelectItem").removeClass('Getitems').addClass('Getitems');
          });
-
-    $('.Getitems').select2();
-    $('.Getitems').select2({
-        placeholder: 'Choose Item',
+ 
+         
+         // indexCount++;
+         // let next = indexCount;
+         // let last = next-1;
+ 
+         $table.find('input[type=number]').prop('readonly', true);
+         $table.find('input[type=text]').prop('readonly', true);
+         $table.find('input[type=date]').prop('readonly', true);
+         $table.find('textarea').prop('readonly', true);
+         $table.find('select').attr("disabled", true);
+         let $top= $table.find('div.tr').first();
+         let $new = $top.clone(true);
+         $table.append($new);
+         $new.find('input[type=text]').val('');
+         $new.find('input[type=number]').val('');
+         $new.find('input[type=number]').prop('readonly', false);
+         $new.find('input[type=text]').prop('readonly', false);
+         $new.find('input[type=date]').prop('readonly', false);
+         $new.find('textarea').prop('readonly', false);
+         $new.find('select').attr("disabled", false);
+         $new.find('select').val('');
+         $new.find('.copy_row').show();
+         // $new.find('.budgetforpiece').prop('readonly', true);
+ 
+         // let trLength= $('.tr').length;
+         // if(trLength == 2){
+         //     console.log("sdfsfa");
+         //     {{--  if ($(".productOrServiceSelect"+last)[0]){
+         //         $('.productOrServiceSelect'+last).select2("destroy");
+         //     }  --}}
+         //     {{--  $(".SelectProduct").removeClass (function (index, className) {
+         //         return (className.match (/(^|\s)productOrServiceSelect\S+/g) || []).join(' ');
+         //     });  --}}
+         // }
+ 
+ 
+        $new.find(".SelectProduct").removeClass('productOrServiceSelect').addClass('productOrServiceSelect');
+        $new.find(".SelectProduct").removeClass('getSubGroup').addClass('getSubGroup');
+        $new.find(".SelectItem").removeClass('Getitems').addClass('Getitems');
+ 
+ 
+         $new.find('.productOrServiceSelect').select2();
+ 
+         $new.find('.getSubGroup').select2();
+         $new.find('.getSubGroup').select2({
+             placeholder: 'Choose Sub Group',
+              });
+ 
+         $new.find('.Getitems').select2();
+         $new.find('.Getitems').select2({
+             placeholder: 'Choose Item',
+              });
+ 
+ 
+         // $('.tr').each(function(){
+         //     console.log($(this).index());
+         // });
+         //     console.log('tr');    
+ 
+     });
+ 
+     $("#edit_row").click(function(e){
+         e.preventDefault();
+         let $table = $('.table');
+         // Edit all table to destroy all other row 
+         $table.find('.tr').first().each(function(){
+             // $(this).find('.productOrServiceSelect').select2("destroy");
+             $(this).find(".SelectProduct").removeClass('productOrServiceSelect');
+ 
+             $(this).find('.getSubGroup').select2("destroy");
+             $(this).find(".SelectProduct").removeClass('getSubGroup');
+             // }
+             // if ($(this).find(".Getitems")[0]){
+             $(this).find('.Getitems').select2("destroy");
+             $(this).find(".SelectItem").removeClass('Getitems');
+ 
+             $(this).find(".SelectProduct").removeClass('productOrServiceSelect').addClass('productOrServiceSelect');
+             $(this).find(".SelectProduct").removeClass('getSubGroup').addClass('getSubGroup');
+             $(this).find(".SelectItem").removeClass('Getitems').addClass('Getitems');
          });
-
-
-    $('#date').val(new Date().toDateInputValue());
-    $('.budgetforpiece').prop('readonly', true);
-
-    $("#add_row").click(function(e){
+ 
+         $(".SelectProduct").removeClass('productOrServiceSelect').addClass('productOrServiceSelect');
+         $(".SelectProduct").removeClass('getSubGroup').addClass('getSubGroup');
+         $(".SelectItem").removeClass('Getitems').addClass('Getitems');
+ 
+         $('.productOrServiceSelect').select2();
+ 
+         $('.getSubGroup').select2();
+         // $('.getSubGroup').select2({
+         //     placeholder: 'Choose Sub Group',
+         // });
+ 
+         $('.Getitems').select2();
+         // $('.Getitems').select2({
+         //     placeholder: 'Choose Sub Group',
+         // });
+ 
+         $table.find('input[type=number]').prop('readonly', true);
+         $table.find('input[type=text]').prop('readonly', true);
+         $table.find('input[type=date]').prop('readonly', true);
+         $table.find('textarea').prop('readonly', true);
+         $table.find('select').attr("disabled", true);
+         $('.copy_row').hide();
+         $('.tr').removeClass('asd');
+         $(this).parents('.tr').addClass('asd');
+         $('.asd select .SelectProduct .SelectItem').select2();
+         // $('.asd select').select2({
+             // placeholder: 'please Select',
+             //  });
+         let $new = $('.asd');
+         $new.find('input[type=number]').prop('readonly', false);
+         $new.find('input[type=text]').prop('readonly', false);
+         $new.find('input[type=date]').prop('readonly', false);
+         $new.find('textarea').prop('readonly', false);
+         $new.find('select').attr("disabled", false);
+         $new.find('.copy_row').show();
+         // $new.find('.budgetforpiece').prop('readonly', true);
+         
+         $(this).parents('.tr').find(".SelectProduct").removeClass('productOrServiceSelect').addClass('productOrServiceSelect');
+         $(this).parents('.tr').find(".SelectProduct").removeClass('getSubGroup').addClass('getSubGroup');
+         $(this).parents('.tr').find(".SelectItem").removeClass('Getitems').addClass('Getitems');
+ 
+         $(this).parents('.tr').find('.productOrServiceSelect').select2();
+ 
+         $(this).parents('.tr').find('.getSubGroup').select2();
+         // // $('.getSubGroup').select2({
+         // //     placeholder: 'Choose Sub Group',
+         // // });
+ 
+         $(this).parents('.tr').find('.Getitems').select2();
+         // // $('.Getitems').select2({
+         // //     placeholder: 'Choose Sub Group',
+         // // });
+ 
+     });
+ 
+     // Copy Button
+     $("#copy_row").click(function(e){
         e.preventDefault();
-
-        $('#delete_row').show();
-        $('#edit_row').show();
-        let $table = $('.table');
-        indexCount++;
-        let next = indexCount;
-        let last = next-1;
-
-        if ($(".productOrServiceSelect")[0]){
-            $('.productOrServiceSelect').select2("destroy");
-            $(".SelectProduct").removeClass('productOrServiceSelect');
-        }
-        if ($(".getSubGroup")[0]){
-            $('.getSubGroup').select2("destroy");
-            $(".SelectProduct").removeClass('getSubGroup');
-        }
-        if ($(".Getitems")[0]){
-            $('.Getitems').select2("destroy");
-            $(".SelectItem").removeClass('Getitems');
-        }
-
-
-
-        // $("select[class|='productOrServiceSelect']").select2('destroy');  --}}
-        //   let className = $('.tr select').attr('class').split(' ').pop();
-        // if( $('.'+className)[1]){
-
-        //     $('.'+className).select2("destroy");
-        // }
-
-
-
-        // { if ($(".productOrServiceSelect"+last)[0]){
-        //         console.log(last);
-        //     $('.productOrServiceSelect'+last).select2("destroy");
-        //     $(".SelectProduct").removeClass('productOrServiceSelect'+next);
-        // }
-
-
-        // console.log('.'+className);
-
-        //console.log(next)
-
-        if($('.asd select')[0]){
-            $('.asd select').select2("destroy");
-            $(".tr").removeClass('asd');
-        }
-
-        $table.find('input[type=number]').prop('readonly', true);
-        $table.find('input[type=text]').prop('readonly', true);
-        $table.find('input[type=date]').prop('readonly', true);
-        $table.find('textarea').prop('readonly', true);
-        $table.find('select').attr("disabled", true);
-        let $top= $table.find('div.tr').first();
-        let $new = $top.clone(true);
-        $table.append($new);
-        $new.find('input[type=text]').val('');
-        $new.find('input[type=number]').val('');
-        $new.find('input[type=number]').prop('readonly', false);
-        $new.find('input[type=text]').prop('readonly', false);
-        $new.find('input[type=date]').prop('readonly', false);
-        $new.find('textarea').prop('readonly', false);
-        $new.find('select').attr("disabled", false);
-        $new.find('select').val('');
-        $new.find('.budgetforpiece').prop('readonly', true);
-
-        let trLength= $('.tr').length;
-        if(trLength == 2){
-            console.log("sdfsfa");
-            {{--  if ($(".productOrServiceSelect"+last)[0]){
-                $('.productOrServiceSelect'+last).select2("destroy");
-            }  --}}
-            {{--  $(".SelectProduct").removeClass (function (index, className) {
-                return (className.match (/(^|\s)productOrServiceSelect\S+/g) || []).join(' ');
-            });  --}}
-        }
-
-
-       $(".SelectProduct").removeClass('productOrServiceSelect'+last).addClass('productOrServiceSelect'+next);
-       $(".SelectProduct").removeClass('getSubGroup'+last).addClass('getSubGroup'+next);
-       $(".SelectItem").removeClass('Getitems'+last).addClass('Getitems'+next);
-
-
-        $('.productOrServiceSelect'+next).select2();
-
-        $('.getSubGroup'+next).select2();
-        $('.getSubGroup'+next).select2({
-            placeholder: 'Choose Sub Group',
+        $('#delete_row').show(); 
+         
+         /////// 
+         $('#edit_row').show();
+         const $table = $('.table');
+ 
+         
+         let $tr = $(this).parents('.tr');
+         // indexCount++;
+         console.log(indexCount);
+         // let next = indexCount;
+         // let last = next-1;
+         $table.find('.tr').first().each(function(){
+             // $(this).find('.productOrServiceSelect').select2("destroy");
+             $(this).find(".SelectProduct").removeClass('productOrServiceSelect');
+ 
+             $(this).find('.getSubGroup').select2("destroy");
+             $(this).find(".SelectProduct").removeClass('getSubGroup');
+             // }
+             // if ($(this).find(".Getitems")[0]){
+             $(this).find('.Getitems').select2("destroy");
+             $(this).find(".SelectItem").removeClass('Getitems');
+ 
+ 
+             $(this).find(".SelectProduct").removeClass('productOrServiceSelect').addClass('productOrServiceSelect');
+             $(this).find(".SelectProduct").removeClass('getSubGroup').addClass('getSubGroup');
+             $(this).find(".SelectItem").removeClass('Getitems').addClass('Getitems');
+         });
+ 
+ 
+         
+         
+ 
+         $tr.find('input[type=number]').prop('readonly', true);
+         $tr.find('input[type=text]').prop('readonly', true);
+         $tr.find('input[type=date]').prop('readonly', true);
+         $tr.find('textarea').prop('readonly', true);
+         $tr.find('select').attr("disabled", true);
+         $('.copy_row').hide();
+         $tr.find(".SelectProduct").removeClass('productOrServiceSelect').addClass('productOrServiceSelect');
+         $tr.find(".SelectProduct").removeClass('getSubGroup').addClass('getSubGroup');
+         $tr.find(".SelectItem").removeClass('Getitems').addClass('Getitems');
+         
+         // $tr.find('.SelectProduct').select2("destroy");
+         // $tr.find('.SelectItem').select2("destroy");
+         // let $tr = $(this);
+         let $new = $tr.clone(true);
+         console.log($new);
+         $tr.after($new);
+ 
+         // $('.SelectProduct').select2();
+         // $('.SelectItem').select2();
+         // $new.find('.SelectProduct').select2('val', '');
+         // $new.find('.SelectItem').select2('val', '');
+ 
+         // $new.find('input[type=text]').val('');
+         // $new.find('input[type=number]').val('');
+         $new.find('input[type=number]').prop('readonly', false);
+         $new.find('input[type=text]').prop('readonly', false);
+         $new.find('input[type=date]').prop('readonly', false);
+         $new.find('textarea').prop('readonly', false);
+         $new.find('select').attr("disabled", false);
+         $new.find('select').val(function(index, value) {
+             return $tr.find('select').eq(index).val();
+         });
+         $new.find('.copy_row').show();
+ 
+         // $new.find('select').val('');
+         // $new.find('.budgetforpiece').prop('readonly', true);
+ 
+         // let trLength= $('.tr').length;
+         // if(trLength == 2){
+         //     console.log("sdfsfa");
+         //     {{--  if ($(".productOrServiceSelect"+last)[0]){
+         //         $('.productOrServiceSelect'+last).select2("destroy");
+         //     }  --}}
+         //     {{--  $(".SelectProduct").removeClass (function (index, className) {
+         //         return (className.match (/(^|\s)productOrServiceSelect\S+/g) || []).join(' ');
+         //     });  --}}
+         // }
+ 
+ 
+     //    $new.find(".SelectProduct").removeClass('productOrServiceSelect').addClass('productOrServiceSelect');
+     //    $new.find(".SelectProduct").removeClass('getSubGroup').addClass('getSubGroup');
+     //    $new.find(".SelectItem").removeClass('Getitems').addClass('Getitems');
+ 
+        $(".SelectProduct").removeClass('productOrServiceSelect').addClass('productOrServiceSelect');
+        $(".SelectProduct").removeClass('getSubGroup').addClass('getSubGroup');
+        $(".SelectItem").removeClass('Getitems').addClass('Getitems');
+ 
+         $new.find('.productOrServiceSelect').select2();
+ 
+         $new.find('.getSubGroup').select2();
+         $new.find('.getSubGroup').select2({
+             placeholder: 'Choose Sub Group',
+         });
+ 
+         $new.find('.Getitems').select2();
+         $new.find('.Getitems').select2({
+             placeholder: 'Choose Sub Group',
+         });
+ 
+     });
+ 
+     $("#delete_row").click(function(e){
+         let trLength= $('.tr').length;
+         if(trLength == 2){
+             $(".SelectProduct").removeClass(function (index, className) {
+                 return (className.match (/(^|\s)productOrServiceSelect\S+/g) || []).join(' ');
              });
-
-        $('.Getitems'+next).select2();
-        $('.Getitems'+next).select2({
-            placeholder: 'Choose Item',
+             $(".SelectProduct").removeClass(function (index, className) {
+                 return (className.match (/(^|\s)getSubGroup\S+/g) || []).join(' ');
              });
-
-
-
-
-    });
-
-    $("#edit_row").click(function(e){
-        e.preventDefault();
-        let $table = $('.table');
-        $table.find('input[type=number]').prop('readonly', true);
-        $table.find('input[type=text]').prop('readonly', true);
-        $table.find('input[type=date]').prop('readonly', true);
-        $table.find('textarea').prop('readonly', true);
-        $table.find('select').attr("disabled", true);
-        $('.tr').removeClass('asd');
-        $(this).parents('.tr').addClass('asd');
-        $('.asd select').select2();
-        $('.asd select').select2({
-            placeholder: 'please Select',
+             $(".SelectItem").removeClass(function (index, className) {
+                 return (className.match (/(^|\s)Getitems\S+/g) || []).join(' ');
              });
-        let $new = $('.asd');
-        $new.find('input[type=number]').prop('readonly', false);
-        $new.find('input[type=text]').prop('readonly', false);
-        $new.find('input[type=date]').prop('readonly', false);
-        $new.find('textarea').prop('readonly', false);
-        $new.find('select').attr("disabled", false);
-        $new.find('.budgetforpiece').prop('readonly', true);
-
-    });
-
-    $("#delete_row").click(function(e){
-        let trLength= $('.tr').length;
-        if(trLength == 2){
-            $(".SelectProduct").removeClass(function (index, className) {
-                return (className.match (/(^|\s)productOrServiceSelect\S+/g) || []).join(' ');
-            });
-            $(".SelectProduct").removeClass(function (index, className) {
-                return (className.match (/(^|\s)getSubGroup\S+/g) || []).join(' ');
-            });
-            $(".SelectItem").removeClass(function (index, className) {
-                return (className.match (/(^|\s)Getitems\S+/g) || []).join(' ');
-            });
-
-
-            if($('.tr .select2-hidden-accessible')[0]){
-                $('.tr .select2-hidden-accessible').select2("destroy");
-                $('.tr').addClass('asd');
-                $('.asd select').select2();
-
-            }
-        }
-        $('#delete_row').show();
-        $(this).parents('.tr').remove();
-        if ($(".tr").length <=1 ){
-            $('#delete_row').hide();
-        }
-    });
-
-
-    $('.currency').on('change',function(){
-        $(this).parents('.tr').find('.budgetforpiece').prop('readonly', false);
-    });
-    // Sbstraction 2 values to get actual quantity to purchase
-    $('#items_table').on('keydown keyup','.tr', function(){
-        let qrtp = $(this).find('.qrtp').val();
-        let qos =  $(this).find('.qos').val();
-        let aqrtp = $(this).find('.aqrtp');
-        let subtract = Math.abs(qrtp-qos);
-
-        aqrtp.val(subtract);
-
-        // Total Row budget
-        var totalVaules = [];
-        var holderSummution = {};
-        var newArraySummution = [];
-
-        if (!isNaN($(this).find('.budgetforpiece').val())) {
-
-            $('.budgetforpiece').each(function(){
-                let budgetforpiece = Number($(this).val());
-                let aqrtp = $(this).parents('.tr').find('.aqrtp').val();
-                let currencysymbol = $(this).parents('.tr').find('.currency').val();
-                let totalrowbudget = aqrtp * budgetforpiece ;
-                let rowbudget = $(this).parents('.tr').find('.rowbudget');
-                 $(rowbudget).val(totalrowbudget);
-
-                 totalVaules.push({budget:totalrowbudget , currency:currencysymbol});
-
-            });
-
-        }
-
-
-
-        // array summution budget
-          totalVaules.forEach(function(d) {
-            if (holderSummution.hasOwnProperty(d.currency)) {
-                holderSummution[d.currency] = holderSummution[d.currency] + d.budget ;
-            } else {
-                holderSummution[d.currency] = d.budget;
-            }
-            });
-            for (var prop in holderSummution) {
-            newArraySummution.push({ budget: holderSummution[prop], currency: prop + ' + '});
-            }
-
-            var sumrowbudget=' ';
-            $.each(newArraySummution, function(k, v) {
-                for(var prop in v){
-                        sumrowbudget += v[prop];
-                        $('.sumrowbudget').val(sumrowbudget);
-                }
-            });
-
-    });
-
-
-  });
-
-  $('#productOrServiceGroup').select2();
-  $('#productOrServiceGroup').select2({
-  placeholder: 'Choose Main Group',
+ 
+ 
+             if($('.tr .select2-hidden-accessible')[0]){
+                 $('.tr .select2-hidden-accessible').select2("destroy");
+                 $('.tr').addClass('asd');
+                 $('.asd select').select2();
+ 
+             }
+         }
+         $('#delete_row').show();
+         $(this).parents('.tr').remove();
+         if ($(".tr").length <=1 ){
+             $('#delete_row').hide();
+         }
+     });
+ 
+ 
+     $('.currency').on('change',function(){
+         $(this).parents('.tr').find('.budgetforpiece').prop('readonly', false);
+     });
+     // Sbstraction 2 values to get actual quantity to purchase
+     $('#items_table').on('keydown keyup','.tr', function(){
+         let qrtp = $(this).find('.qrtp').val();
+         let qos =  $(this).find('.qos').val();
+         let aqrtp = $(this).find('.aqrtp');
+         let subtract = Math.abs(qrtp-qos);
+ 
+         aqrtp.val(subtract);
+ 
+         // Total Row budget
+         var totalVaules = [];
+         var holderSummution = {};
+         var newArraySummution = [];
+ 
+         if (!isNaN($(this).find('.budgetforpiece').val())) {
+ 
+             $('.budgetforpiece').each(function(){
+                 let budgetforpiece = Number($(this).val());
+                 let aqrtp = $(this).parents('.tr').find('.aqrtp').val();
+                 let currencysymbol = $(this).parents('.tr').find('.currency').val();
+                 let totalrowbudget = aqrtp * budgetforpiece ;
+                 let rowbudget = $(this).parents('.tr').find('.rowbudget');
+                  $(rowbudget).val(totalrowbudget);
+ 
+                  totalVaules.push({budget:totalrowbudget , currency:currencysymbol});
+ 
+             });
+ 
+         }
+ 
+ 
+ 
+         // array summution budget
+           totalVaules.forEach(function(d) {
+             if (holderSummution.hasOwnProperty(d.currency)) {
+                 holderSummution[d.currency] = holderSummution[d.currency] + d.budget ;
+             } else {
+                 holderSummution[d.currency] = d.budget;
+             }
+             });
+             for (var prop in holderSummution) {
+             newArraySummution.push({ budget: holderSummution[prop], currency: prop + ' + '});
+             }
+ 
+             var sumrowbudget=' ';
+             $.each(newArraySummution, function(k, v) {
+                 for(var prop in v){
+                         sumrowbudget += v[prop];
+                         $('.sumrowbudget').val(sumrowbudget);
+                 }
+             });
+ 
+     });
+ 
+ 
    });
-
-   $('#form').submit(function() {
-    $("select").prop('disabled', false);
-    })
-// Make Site required if user select project
-$('select[name=project]').on('propertychange change input', function () {
-    if ($(this).val() != '') {
-        // $('#provinceselect').show();
-        $('#site').prop('required',true);
-        {{--  $('#site').addClass('invalid-feedback');  --}}
-    } else {
-        $('#site').prop('required',false);
-        {{--  $('#site').removeClass('invalid-feedback');  --}}
-        // $('#provinceselect').hide();
-    }
-});
-
-    $('#productOrServiceGroup').on('change', function (e) {
-        let id = $(this).val();
-        $('.SelectProduct').empty();
-        $('.Getitems').empty();
-      $.ajax({
-          type: 'GET',
-          url: 'getSubGroupFromGroup/'+id,
-          success: function( response){
-              var responses = JSON.parse(response);
-              $('.SelectProduct').empty();
-              responses.forEach(element => {
-                  $('.SelectProduct').append(`<option></option><option value="${element['id']}">${element['service_name']}</option>`);
-              });
-
-          }
-      });
-  });
-
-  {{--  $('.tr').each(function(){
-    $('.tr').on('propertychange change keyUp keyDown', function (e) {
-        let id_num = $(this).children().find('.SelectProduct').val();
-       // let id_num = $(this).val();
-        console.log(id_num);
-
-        $(this).children().find('.SelectItem').empty();
-        let _this = $(this);
-        console.log($(this));
-         $.ajax({
-          type: 'GET',
-          url: 'getItemFromSubGroup/'+id_num,
-          success: function (response) {
-              var responses = JSON.parse(response);
-              _this.children().find('.SelectItem').empty();
-              responses.forEach(element => {
-                _this.children().find('.SelectItem').append(`<option></option><option value="${element['id_num']}">${element['prod_name']}</option>`);
-              });
-          }
-      });
-  });  --}}
-
-  $('.tr').each(function(){
-    $(this).on('propertychange change', function (e) {
-        let id_num = $(this).children().find('.SelectProduct').val();
-       // let id_num = $(this).val();
-        console.log(id_num);
-
-         {{--  $(this).children().find('.SelectItem').removeData();  --}}
-        let _this = $(this).children().find('.SelectItem');
-        console.log($(this));
-         $.ajax({
-          type: 'GET',
-          url: 'getItemFromSubGroup/'+id_num,
-          success: function (response) {
-              var responses = JSON.parse(response);
-              _this.children().find('.SelectItem').removeData();
-            console.log(responses);
-              responses.forEach(element => {
-                //   if ((_this).children().find('.SelectItem').val() !=''){
-                //       console.log('from if');
-                    // _this.children().find('.SelectItem option').removeData();
-                    // _this.children().find('.SelectItem').append(`<option></option><option value="${element['id_num']}">${element['prod_name']}</option>`);
-                //   }else{
-                  {{--  _this.children().find('.SelectItem option').first().remove();  --}}
-                //   _this.children().find('.SelectItem option').first().remove();
-                //   _this.children().find('.SelectItem option').eq(0).remove();
-                //   _this.children().find('.SelectItem option:nth-child(1)').remove();
-                    _this.children().find('.SelectItem').append(`<option></option><option value="${element['id_num']}">${element['prod_name']}</option>`);
-                //   }
-              });
-            //   _this.children().find('.SelectItem option').removeData();
-          }
-
-      });
-  });
-
-});
+ 
+   $('#productOrServiceGroup').select2();
+   $('#productOrServiceGroup').select2({
+   placeholder: 'Choose Main Group',
+    });
+ 
+    $('#form').submit(function() {
+     $("select").prop('disabled', false);
+     })
+ // Make Site required if user select project
+ $('select[name=project]').on('propertychange change input', function () {
+     if ($(this).val() != '') {
+         // $('#provinceselect').show();
+         $('#site').prop('required',true);
+         {{--  $('#site').addClass('invalid-feedback');  --}}
+     } else {
+         $('#site').prop('required',false);
+         {{--  $('#site').removeClass('invalid-feedback');  --}}
+         // $('#provinceselect').hide();
+     }
+ });
+ 
+     $('#productOrServiceGroup').on('change', function (e) {
+         let id = $(this).val();
+         $('.SelectProduct').empty();
+         $('.Getitems').empty();
+       $.ajax({
+           type: 'GET',
+           url: 'getSubGroupFromGroup/'+id,
+           success: function( response){
+               var responses = JSON.parse(response);
+               $('.SelectProduct').empty();
+               responses.forEach(element => {
+                   $('.SelectProduct').append(`<option></option><option value="${element['id']}">${element['service_name']}</option>`);
+               });
+ 
+           }
+       });
+   });
+ 
+   $('.SelectProduct').each(function(){
+     $(this).on('propertychange change keyUp keyDown', function (e) {
+         let id = $(this).val();
+        // let id_num = $(this).val();
+         console.log(id);
+ 
+         // $(this).children().find('.SelectItem').removeData();
+         let _this = $(this);
+         _this.parents('.tr').find('.SelectItem').empty();
+         console.log($(this));
+          $.ajax({
+           type: 'GET',
+           url: 'getItemFromSubGroup/'+id,
+           success: function (response) {
+               var responses = JSON.parse(response);
+             //   _this.children().find('.SelectItem').html("");
+             console.log(responses);
+               responses.forEach(element => {
+                 //   if ((_this).children().find('.SelectItem').val() !=''){
+                 //       console.log('from if');
+                     // _this.children().find('.SelectItem option').removeData();
+                     // _this.children().find('.SelectItem').append(`<option></option><option value="${element['id_num']}">${element['prod_name']}</option>`);
+                 //   }else{
+                 console.log('before'+_this.parents('.tr').find('.SelectItem'));
+                 //   _this.parents('.tr').find('.SelectItem').empty();
+                   console.log('after'+_this.parents('.tr').find('.SelectItem'));
+                 //   _this.parents('.tr').find('.SelectItem option').first().remove();
+                 //   console.log('from con'+_this.parents('.tr').find('.SelectItem').first());
+                 //   _this.children().find('.SelectItem option:nth-child(1)').remove();
+                     _this.parents('.tr').find('.SelectItem').append(`<option value=""></option><option value="${element['id']}">${element['prod_name']}</option>`);
+                 //   }
+               });
+             //   _this.children().find('.SelectItem option').removeData();
+           }
+ 
+       });
+   });
+ });
+ 
+ </script>
 
 </script>
 @endsection

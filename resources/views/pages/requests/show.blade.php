@@ -52,6 +52,12 @@
                                 {{ $prrequest->department }}
                             </th>
                         </tr>
+                        <tr>
+                            <th>Status</th>
+                            <th>
+                                {{ $user->is_user && $prrequest->approval_id < 3 ? $defaultStatus->approval_name : $prrequest->approval->approval_name }}
+                            </th>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -82,6 +88,7 @@
                                 {{ $prrequest->mainGroup->group_name }}
                             </th>
                         </tr>
+                        
                     </tbody>
                 </table>
             </div>
@@ -183,6 +190,23 @@
                     </table>
                 </div>
                 {{--  </div>  --}}
+                <div class="form-group ml-4">
+                    @if($user->is_admin || in_array($prrequest->approval_id, [1]))
+                    <a class="btn btn-success" href="{{ route('requests.showSend', $prrequest->id) }}">
+                        Send to
+                        @if($prrequest->approval_id == 1)
+                            {{$prrequest->mainGroup->approval->approval_name}}
+                        @else
+                            {{$prrequest->mainGroup->approval->stepapprovals->step_name}}
+                        @endif
+                    </a>
+                    {{-- @elseif(($user->is_analyst && $loanApplication->status_id == 2) || ($user->is_cfo && $loanApplication->status_id == 5))
+                        <a class="btn btn-success" href="{{ route('admin.loan-applications.showAnalyze', $loanApplication->id) }}">
+                            Submit analysis
+                        </a> --}}
+                    @endif
+    
+                </div>
             </div>
 
         </div>
