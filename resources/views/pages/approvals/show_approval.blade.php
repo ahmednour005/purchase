@@ -69,7 +69,7 @@
                     </div>
                   <div class="card-body text-center">
                     <main class="stepline">
-                        @foreach ($approval->step_approvals as $steps)
+                        @foreach ($approval->stepapprovals as $steps)
                             <div class="item">
                                 <h4>{{ $steps->step_name }}</h4>
                                 @foreach ($steps->users as $user)

@@ -305,7 +305,7 @@ class PrRequestsController extends Controller
 
         Toastr::success('suceess','Purchase Request has been sent for'.$stepname);
 
-        return redirect()->route('requests.index')->with('message', 'Purchase Request has been sent for step_name');
+        return redirect()->route('requests.index');
     }
 
 
