@@ -100,7 +100,9 @@ class PrRequestsController extends Controller
             'project' => $request->project,
             'site' => $request->site,
             'user_location' => $request->user_location,
-            'created_by' => Auth::id(),
+            'user_id' => Auth::id(),
+            'userstep_id' => Auth::id(),
+            'stepapproval_id' => Auth::id(),
         ]);
 
 
@@ -125,12 +127,12 @@ class PrRequestsController extends Controller
 
         // For Test Relationship Purpose
         // $status = MainGroup::find($request->main_group_id)->approval->id;
-        
+
         // dd($main_group);
 
 
         // $status = MainGroup->approval->id;
-        
+
         // dd($status);
 
         // $stepapprovals = Approval::find($status)->stepapprovals->all();
@@ -139,7 +141,7 @@ class PrRequestsController extends Controller
         //     print_r ($stepapproval->step_name.'<br>');
         //     dd($stepapproval->step_name);
         // }
-        
+
         // dd($stepapproval);
 
         // return redirect()->route('requests.index')->with('message', 'Request created Successfully');
@@ -162,7 +164,7 @@ class PrRequestsController extends Controller
         // $laststepnumber = PrRequest::find($id)->mainGroup->approval->stepapprovals->pluck('step_number')->last();
         // $users = $step_id->users;
         // $arr = array();
-        // $index = 0; 
+        // $index = 0;
         // foreach($users as $st){
             // echo "<pre>";
             // $arr[] = $st->id;
@@ -172,7 +174,7 @@ class PrRequestsController extends Controller
         // }
 
         // dd($stepname);
-        // for ($i=0; $i < count($arr) ; $i++) { 
+        // for ($i=0; $i < count($arr) ; $i++) {
         //     echo "<pre>";
         //         $arr[$i];
         //     // print_r($st->name);
@@ -247,11 +249,11 @@ class PrRequestsController extends Controller
             // $user_name = array();
             // $user_jobtitle = array();
             // foreach($users as $user) {
-            //     $user_id[] = $user->id; 
-            //     $user_name[] = $user->name; 
-            //     $user_jobtitle[] = $user->job_title; 
-            // } 
-            
+            //     $user_id[] = $user->id;
+            //     $user_name[] = $user->name;
+            //     $user_jobtitle[] = $user->job_title;
+            // }
+
             // $users = $prrequest->mainGroup->approval->stepapprovals->users->pluck('name', 'id', 'job_title');
         // } else if (!in_array($prrequest->approval_id, [3,4])) {
         //     // $role = 'CFO';
@@ -267,7 +269,7 @@ class PrRequestsController extends Controller
     public function send(Request $request, PrRequest $prrequest)
     {
         // abort_if(!auth()->user()->is_admin, Response::HTTP_FORBIDDEN, '403 Forbidden');
-        
+
         // $status = Approval::where('approval_name','Pending')->first();
 
         if ($prrequest->approval_id == 1) {
@@ -281,8 +283,8 @@ class PrRequestsController extends Controller
             $user_name = array();
             $user_jobtitle = array();
             foreach($users as $user) {
-                $user_id[] = $user->id; 
-                $user_name[] = $user->name; 
+                $user_id[] = $user->id;
+                $user_name[] = $user->name;
                 $user_jobtitle[] = $user->job_title;
         }
          //else if (in_array($prrequest->approval_id, [3,4])) {
