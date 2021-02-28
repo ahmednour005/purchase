@@ -2,16 +2,13 @@
 
 namespace App\Http\Controllers\Portal;
 
-use App\Charts\Requests;
 use App\Http\Controllers\Controller;
-use App\Models\Approval;
-use App\Models\JobTitle;
-use App\Models\MainGroup;
+use App\Models\Department;
 use App\User;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\Request;
 
-class JobTitleController extends Controller
+class DepartmentController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -20,11 +17,11 @@ class JobTitleController extends Controller
      */
     public function index()
     {
-        $job_titles = JobTitle::all();
+        $departments = Department::all();
         $data =null;
         $users = User::all();
         $users_count=  $users->count();
-        return view('pages.portal.job_title',compact('users_count','job_titles', 'approvals','data'));
+        return view('pages.portal.department',compact('users_count','departments', 'approvals','data'));
     }
 
     /**
@@ -34,7 +31,7 @@ class JobTitleController extends Controller
      */
     public function create()
     {
-
+        //
     }
 
     /**
@@ -46,9 +43,9 @@ class JobTitleController extends Controller
     public function store(Request $request)
     {
         $input = $request->all();
-        JobTitle::create($input);
-        Toastr::success('تم إضافة المسمى الوظيفى بنجاح',trans("site.success"));
-        return redirect('/portal/job_titles');
+        Department::create($input);
+        Toastr::success('تم إضافة القسم بنجاح',trans("site.success"));
+        return redirect('/portal/department');
     }
 
     /**
@@ -70,11 +67,11 @@ class JobTitleController extends Controller
      */
     public function edit($id)
     {
-        $data = JobTitle::findOrFail($id);
-        $job_titles = JobTitle::orderBy('id', 'DESC')->get();
+        $data = Department::findOrFail($id);
+        $departments = Department::orderBy('id', 'DESC')->get();
         $users = User::all();
         $users_count=  $users->count();
-        return view('pages.portal.job_title',compact('job_titles','data','users_count'));
+        return view('pages.portal.department',compact('departments','data','users_count'));
     }
 
     /**
@@ -87,10 +84,10 @@ class JobTitleController extends Controller
     public function update(Request $request, $id)
     {
         $input = $request->all();
-        $job_title = JobTitle::findOrFail($id);
+        $job_title = Department::findOrFail($id);
         $job_title->update($input);
-        Toastr::success('تم تعديل المسمى الوظيفى',trans("site.success"));
-        return redirect('/portal/job_titles');
+        Toastr::success('تم تعديل القسم',trans("site.success"));
+        return redirect('/portal/department');
     }
 
     /**
@@ -101,10 +98,9 @@ class JobTitleController extends Controller
      */
     public function destroy(Request $request)
     {
-        $data = JobTitle::findOrFail($request->jobtitle_id);
+        $data = Department::findOrFail($request->department_id);
         $data->delete();
-        Toastr::success('تم حذف المسمى الوظيفى بنجاح',trans("site.success"));
-        return redirect('/portal/job_titles');
+        Toastr::success('تم حذف القسم بنجاح',trans("site.success"));
+        return redirect('/portal/department');
     }
-
 }

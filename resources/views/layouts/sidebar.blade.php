@@ -223,6 +223,13 @@
                             <p> Job Title </p>
                         </a>
                      </li>
+                     <li class="nav-item">
+                        <a href="{{route('department.index')}}" class="nav-link {{ (request()->is('*portal/department'))
+                            || (request()->is('*portal/department/*/edit')) ? 'active' : '' }}">
+                            <i class="fa fa-layer-group nav-icon"></i>
+                            <p> Department </p>
+                        </a>
+                     </li>
                 </ul>
 
             </li>
