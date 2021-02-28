@@ -119,7 +119,7 @@ class ApprovalController extends Controller
     {
         $approval = Approval::findOrFail($id);
 
-        foreach($approval->step_approvals as $app){
+        foreach($approval->stepapprovals as $app){
            User_StepApproval::where('step_approval_id', $app->id)->delete();
         }
 

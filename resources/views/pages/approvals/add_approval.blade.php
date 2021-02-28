@@ -81,7 +81,7 @@
                                     </div>
                                     <div class="card-body approval-steps">
                                         <div class="row steps ">
-                                            @foreach ($data->step_approvals as $item)
+                                            @foreach ($data->stepapprovals as $item)
 
                                             <div class="col-sm-12 items">
                                                 <div class="row">
