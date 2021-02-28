@@ -100,12 +100,10 @@
                                         Submit analysis
                                     </a>
                                 @endif
-                                <a class="btn btn-sm btn-info" href="{{ route('requests.show', $prrequest->id) }}">
+                                <a class="btn btn-sm btn-info" href="{{ route('actions.show', $prrequest->id) }}">
                                     view
                                 </a>
-                                <a class="btn btn-sm btn-warning" href="{{ route('requests.edit', $prrequest->id) }}">
-                                    edit
-                                </a>
+
                                 <form action="{{ route('requests.destroy', $prrequest->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
                                     <input type="hidden" name="_method" value="DELETE">
                                     <input type="hidden" name="_token" value="{{ csrf_token() }}">

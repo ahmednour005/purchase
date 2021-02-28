@@ -91,6 +91,9 @@ class PrRequestsController extends Controller
             $requestnumber = $request->user_location.'-'.date('Y').'-'.$newRow;
         }
 
+        $defaultStatus = Approval::find(0);
+        $processingStatus = Approval::where('approval_name','Pending')->first();
+
 
         $prrequest = PrRequest::create([
             'date' => $request->date,
@@ -102,7 +105,8 @@ class PrRequestsController extends Controller
             'user_location' => $request->user_location,
             'user_id' => Auth::id(),
             'userstep_id' => Auth::id(),
-            'stepapproval_id' => Auth::id(),
+            'approval_id' => $processingStatus,
+            'stepapproval_id' => 1,
         ]);
 
 
@@ -144,7 +148,7 @@ class PrRequestsController extends Controller
 
         // dd($stepapproval);
 
-        // return redirect()->route('requests.index')->with('message', 'Request created Successfully');
+        return redirect()->route('requests.index')->with('message', 'Request created Successfully');
 
     }
 
@@ -305,11 +309,53 @@ class PrRequestsController extends Controller
             'stepapproval_id' => $step_id,
         ]);
 
-        Toastr::success('suceess','Purchase Request has been sent for'.$stepname);
+        Toastr::success('sucess','Purchase Request has been sent for'.$stepname);
 
         return redirect()->route('requests.index');
     }
 
+    public function showAnalyze(PrRequest $prrequest)
+    {
+        $user = auth()->user();
 
+        // abort_if(
+        //     (!$user->is_analyst || $loanApplication->status_id != 2) && (!$user->is_cfo || $loanApplication->status_id != 5),
+        //     Response::HTTP_FORBIDDEN,
+        //     '403 Forbidden'
+        // );
+
+        return view('requests.analyze', compact('prrequest'));
+    }
+
+    public function analyze(Request $request, PrRequest $prrequest)
+    {
+        $user = auth()->user();
+
+        if ($user->is_analyst && $prrequest->status_id != 1) {
+            $status = $request->has('approve') ? 3 : 4;
+        }
+        // else if ($user->is_cfo && $loanApplication->status_id == 5) {
+        //     $status = $request->has('approve') ? 6 : 7;
+        // }
+        else {
+            abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
+        }
+
+        // $request->validate([
+        //     'comment_text' => 'required'
+        // ]);
+
+        $prrequest->comments()->create([
+            'comment_text' => $request->comment_text,
+            'user_id'      => $user->id
+        ]);
+
+        $prrequest->update([
+            'approval_id' => $status,
+            'stepapproval_id' => $status,
+        ]);
+
+        return redirect()->route('requests.index')->with('message', 'Analysis has been submitted');
+    }
 
 }

@@ -105,8 +105,12 @@ Route::get('/login/{email?}',function ($email){
 
     //    approval
    Route::resource('approvals', 'Approval\ApprovalController')->middleware('auth');
-// portal
+    Route::get('actions','ActionRequiredController@index')->name('actions.index');
+    Route::get('view_action/{id}','ActionRequiredController@show')->name('actions.show');
 
+
+
+// portal
 Route::resource('portal/job_titles', 'Portal\JobTitleController');
 Route::resource('portal/department', 'Portal\DepartmentController');
 

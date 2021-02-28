@@ -39,7 +39,8 @@
           </li>
 
           <li class="nav-item">
-            <a href="{{route('home')}}" class="nav-link">
+            <a href="{{route('actions.index')}}" class="nav-link {{ (request()->is('*actions')) ||
+                (request()->is('*view_action*'))? 'active' : '' }}">
               <i class="fa fa-hand-pointer nav-icon"></i>
               <p> Action Required</p>
             </a>
@@ -215,7 +216,6 @@
                 </a>
 
                 <ul class="nav nav-treeview">
-
                     <li class="nav-item">
                         <a href="{{route('job_titles.index')}}" class="nav-link {{ (request()->is('*portal/job_titles'))
                             || (request()->is('*portal/job_titles/*/edit')) ? 'active' : '' }}">
@@ -231,7 +231,6 @@
                         </a>
                      </li>
                 </ul>
-
             </li>
             {{--  users  --}}
 
