@@ -68,13 +68,12 @@
                                 <form action="{{route('users.update',$user->id)}}" method="POST">
                                     @csrf
                                     <div class="row">
-
-                                    <div class="col-md-6">
-                                        <div class="form-group mb-3">
-                                            <label> @lang('site.name')</label>
-                                            <input type="email" name="name" value="{{$user->name}}" class="form-control " placeholder="@lang('site.name')" readonly>
+                                        <div class="col-md-6">
+                                            <div class="form-group mb-3">
+                                                <label> @lang('site.name')</label>
+                                                <input type="email" name="name" value="{{$user->name}}" class="form-control " placeholder="@lang('site.name')" readonly>
+                                            </div>
                                         </div>
-                                    </div>
                                         <div class="col-md-6">
                                             <div class="form-group mb-3">
                                                 <label>  @lang('site.email')</label>
@@ -89,6 +88,19 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group mb-3">
+                                                <label>المدير المباشر</label>
+
+                                                <select id='direct_manager'  name="direct_manager" class="form-control" >
+                                                   <option </option>
+                                                    @foreach($users as $u)
+                                                          <option value='{{$u->name}}' {{ $user->direct_manager == $u->name ? 'selected' : '' }}>{{ $u->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-group mb-3">
                                                 <label>  @lang('site.allow_entry')</label>
                                                 <select name="vaild" class="form-control">
                                                     <option  value="1" {{ 1 == $user->vaild ? 'selected' : '' }} > @lang('site.yes')</option>
@@ -97,14 +109,7 @@
                                             </div>
                                         </div>
                                         <div class="col-12">
-                                        {{--  <div class="form-group clearfix">
-                                            <div class="icheck-success d-inline">
-                                                <input type="checkbox" id="checkboxSuccess3">
-                                                <label for="checkboxSuccess3">
-                                                Success checkbox
-                                                </label>
-                                            </div>
-                                        </div>  --}}
+
                                         <div class="card card-primary card-tabs">
                                             <div class="card-header p-0 pt-1">
                                               <ul class="nav nav-tabs" id="custom-tabs-two-tab" role="tablist">
@@ -297,7 +302,6 @@
 
                                               </div>
                                             </div>
-
                                           </div>
 
                                         </div>
@@ -362,7 +366,13 @@
 <script src="{{asset('dist/js/demo.js')}}"></script>
 <script src="{{asset('plugins/select2/dist/js/select2.min.js')}}" type="text/javascript"></script>
 <!-- Page specific script -->
+<script>
+    $('#direct_manager').select2();
+$('#direct_manager').select2({
+placeholder: 'أختر المدير المباشر',
+});
 
+</script>
 
 <script src="http://cdn.bootcss.com/toastr.js/latest/js/toastr.min.js"></script>
 {!! Toastr::message() !!}

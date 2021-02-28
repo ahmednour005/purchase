@@ -17,7 +17,7 @@
     </div><!-- /.container-fluid -->
   </section>
 <div class="card">
-   
+
 
         <div class="card-body">
         <div class="table-responsive" >
@@ -85,6 +85,7 @@
                                 <a class="btn btn-sm btn-warning" href="{{ route('requests.edit', $prrequest->id) }}">
                                     edit
                                 </a>
+                                
                                 <form action="{{ route('requests.destroy', $prrequest->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
                                     <input type="hidden" name="_method" value="DELETE">
                                     <input type="hidden" name="_token" value="{{ csrf_token() }}">

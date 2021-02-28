@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class StepApproval extends Model
 {
     protected $fillable = [
-        'id','approval_id' ,'step_name'
+        'id','approval_id' ,'step_name','step_number'
     ];
 
     public function users()

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateStepApprovalsTable extends Migration
+class CreateJobTitlesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,9 @@ class CreateStepApprovalsTable extends Migration
      */
     public function up()
     {
-        Schema::create('step_approvals', function (Blueprint $table) {
+        Schema::create('job_titles', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('approval_id')->unsigned();
-            $table->foreign('approval_id')->references('id')->on('approvals')->onDelete('cascade');
-            $table->string('step_name');
-            $table->integer('step_number');
-
+            $table->string('job_title');
             $table->timestamps();
         });
     }
@@ -31,6 +27,6 @@ class CreateStepApprovalsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('step_approvals');
+        Schema::dropIfExists('job_titles');
     }
 }

@@ -203,6 +203,29 @@
                 </ul>
 
             </li>
+               {{--  Portal  --}}
+               <li class="nav-item {{ ( (request()->is('*portal*')) )? ' menu-open' : '' }}">
+
+                   <a href="#" class="nav-link">
+                    <i class="nav-icon fas fa-users"></i>
+                    <p>
+                        Portal
+                        <i class="fas fa-angle-left right"></i>
+                    </p>
+                </a>
+
+                <ul class="nav nav-treeview">
+
+                    <li class="nav-item">
+                        <a href="{{route('job_titles.index')}}" class="nav-link {{ (request()->is('*portal/job_titles'))
+                            || (request()->is('*portal/job_titles/*/edit')) ? 'active' : '' }}">
+                            <i class="fas fa-id-card nav-icon"></i>
+                            <p> Job Title </p>
+                        </a>
+                     </li>
+                </ul>
+
+            </li>
             {{--  users  --}}
 
             @if(auth()->user()->hasPermission('users_read'))

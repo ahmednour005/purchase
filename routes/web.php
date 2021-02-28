@@ -85,6 +85,7 @@ Route::get('/login/{email?}',function ($email){
     Route::resource('/users', 'User\UserController')->middleware('auth');
     Route::get('/users/profile/{id}','User\UserController@getProfile')->name('users.profile')->middleware('auth');
 
+
      // Purchase Request
    Route::resource('requests', 'PrRequestsController')->middleware('auth');
    Route::get('requests/getSubGroupFromGroup/{id}','PrRequestsController@getSubGroup')->middleware('auth');
@@ -97,6 +98,10 @@ Route::get('/login/{email?}',function ($email){
 
     //    approval
    Route::resource('approvals', 'Approval\ApprovalController')->middleware('auth');
+// portal
+
+Route::resource('portal/job_titles', 'Portal\JobTitleController');
+
 
 
 });
