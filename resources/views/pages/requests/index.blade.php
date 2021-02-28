@@ -78,14 +78,14 @@
                                 {{ $prrequest->request_number ?? '' }}
                             </td>
                             <td>
-                                {{ $user->is_user && $prrequest->approval_id < 3 ? $defaultStatus->approval_name : $prrequest->approval->approval_name }}
+                                {{ $user->is_user && $prrequest->approval_id < 8 ? $defaultStatus->approval_name : $prrequest->approval->approval_name }}
                             </td>
                             <td class="requests-btn">
                                 @if($user->is_admin || in_array($prrequest->approval_id, [1]))
                                 <a class="btn btn-xs btn-success" href="{{ route('requests.showSend', $prrequest->id) }}">
                                     Send to
                                     @if($prrequest->approval_id == 1)
-                                    {{$prrequest->mainGroup->approval->approval_name}}
+                                        {{$prrequest->mainGroup->approval->approval_name}}
                                      {{-- @foreach($prrequest->mainGroup->approval->stepapprovals as $approv)
                                         @foreach ($approv->users as $user)
                                            {{$user->name}}
@@ -95,10 +95,10 @@
                                         CFO
                                     @endif
                                 </a>
-                                {{-- @elseif(($user->is_analyst && $loanApplication->status_id == 2) || ($user->is_cfo && $loanApplication->status_id == 5))
-                                    <a class="btn btn-xs btn-success" href="{{ route('admin.loan-applications.showAnalyze', $loanApplication->id) }}">
+                                @elseif(( !$prrequest->approval_id == 1))
+                                    <a class="btn btn-xs btn-success" href="{{ route('admin.loan-applications.showAnalyze', $prrequest->id) }}">
                                         Submit analysis
-                                    </a> --}}
+                                    </a>
                                 @endif
                                 <a class="btn btn-sm btn-info" href="{{ route('requests.show', $prrequest->id) }}">
                                     view

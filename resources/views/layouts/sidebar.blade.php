@@ -214,7 +214,7 @@
                   <p>
                     @lang('site.users')
                     <span class="right badge {{ ((request()->is('*users')) ||
-                        (request()->is('*users/*/edit')) || (request()->is('*users/profile*'))) ? 'badge-warning' : 'badge-success' }}">{{$users_count}}</span>
+                        (request()->is('*users/*/edit')) || (request()->is('*users/profile*'))) ? 'badge-warning' : 'badge-success' }}">{{$users_count ?? ''}}</span>
                   </p>
                 </a>
               </li>

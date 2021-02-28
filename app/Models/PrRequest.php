@@ -20,7 +20,9 @@ class PrRequest extends Model implements Auditable
         'main_group_id',
         'user_location',
         'user_id',
+        'userstep_id',
         'approval_id',
+        'stepapproval_id',
     ];
 
     /**

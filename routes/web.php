@@ -91,11 +91,11 @@ Route::get('/login/{email?}',function ($email){
    Route::get('requests/getItemFromSubGroup/{id}','PrRequestsController@getItems')->middleware('auth');
     // Loan Applications
     // Route::delete('requests/destroy', 'LoanApplicationsController@massDestroy')->name('requests.massDestroy');
-    // Route::get('requests/{loan_application}/analyze', 'LoanApplicationsController@showAnalyze')->name('requests.showAnalyze');
-    // Route::post('requests/{loan_application}/analyze', 'LoanApplicationsController@analyze')->name('requests.analyze');
-    Route::get('requests/{pr_request}/send', 'PrRequestsController@showSend')->name('requests.showSend');
-    Route::get('requests/{pr_request}/send', 'PrRequestsController@test')->name('requests.showSend');
-    Route::post('requests/{pr_request}/send', 'PrRequestsController@send')->name('requests.send');
+    Route::get('requests/{prrequest}/analyze', 'PrRequestsController@showAnalyze')->name('requests.showAnalyze');
+    Route::post('requests/{prrequest}/analyze', 'PrRequestsController@analyze')->name('requests.analyze');
+    Route::get('requests/{prrequest}/send', 'PrRequestsController@showSend')->name('requests.showSend');
+    // Route::get('requests/{pr_request}/send', 'PrRequestsController@test')->name('requests.showSend');
+    Route::post('requests/{prrequest}/send', 'PrRequestsController@send')->name('requests.send');
 
 
    Route::get('export', 'DemoController@export')->name('export')->middleware('auth');

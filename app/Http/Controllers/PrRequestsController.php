@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\Service;
 use App\Models\Approval;
 use App\Models\StepApproval;
+use Brian2694\Toastr\Facades\Toastr;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -99,7 +100,7 @@ class PrRequestsController extends Controller
             'project' => $request->project,
             'site' => $request->site,
             'user_location' => $request->user_location,
-            'user_id' => Auth::id(),
+            'created_by' => Auth::id(),
         ]);
 
 
@@ -156,21 +157,21 @@ class PrRequestsController extends Controller
         $prrequest = PrRequest::find($id);
 
         $requestitems = $prrequest->requestitems()->get();
-        $step_id = PrRequest::find($id)->mainGroup->approval->stepapprovals->first();
-        $stepnumber = PrRequest::find($id)->mainGroup->approval->stepapprovals->pluck('step_number')->first();
-        $laststepnumber = PrRequest::find($id)->mainGroup->approval->stepapprovals->pluck('step_number')->last();
-        $users = $step_id->users;
-        $arr = array();
+        // $step_id = PrRequest::find($id)->mainGroup->approval->stepapprovals->first();
+        $stepname = PrRequest::find($id)->mainGroup->approval->stepapprovals->pluck('step_name')->first();
+        // $laststepnumber = PrRequest::find($id)->mainGroup->approval->stepapprovals->pluck('step_number')->last();
+        // $users = $step_id->users;
+        // $arr = array();
         // $index = 0; 
-        foreach($users as $st){
+        // foreach($users as $st){
             // echo "<pre>";
-            $arr[] = $st->id;
+            // $arr[] = $st->id;
             // print_r($st->name);
             // echo "</pre>";
             // $index++;
-        }
+        // }
 
-        dd($step_id);
+        // dd($stepname);
         // for ($i=0; $i < count($arr) ; $i++) { 
         //     echo "<pre>";
         //         $arr[$i];
@@ -186,13 +187,17 @@ class PrRequestsController extends Controller
         //         echo $user->name;
         //     }$
         // }
-        dd($laststepnumber);
+        // dd($laststepnumber);
 
+        $defaultStatus = Approval::find(0);
 
         $users = User::all();
         $users_count=  $users->count();
+        $user = auth()->user();
+        // dd($user);
+
         $indexCount =1;
-        return view('pages.requests.show', compact('prrequest', 'requestitems','indexCount','users_count'));
+        return view('pages.requests.show', compact('prrequest', 'requestitems', 'defaultStatus', 'user','indexCount','users_count'));
     }
 
     /**
@@ -231,20 +236,21 @@ class PrRequestsController extends Controller
 
     public function showSend(PrRequest $prrequest)
     {
-        abort_if(!auth()->user()->is_admin, Response::HTTP_FORBIDDEN, '403 Forbidden');
+        // abort_if(!auth()->user()->is_admin, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         if ($prrequest->approval_id == 1) {
-            $stepname = PrRequest::find($id)->mainGroup->approval->stepapprovals->pluck('step_name')->first();
-            $step = PrRequest::find($id)->mainGroup->approval->stepapprovals->first();
+            $stepname = $prrequest->mainGroup->approval->stepapprovals->pluck('step_name')->first();
+            $step = $prrequest->mainGroup->approval->stepapprovals->first();
             $users = $step->users;
-            $user_id = array();
-            $user_name = array();
-            $user_jobtitle = array();
-            foreach($users as $user) {
-                $user_id[] = $user->id; 
-                $user_name[] = $user->name; 
-                $user_jobtitle[] = $user->job_title; 
-            } 
+            // $column = 'user_id';
+            // $user_id = array();
+            // $user_name = array();
+            // $user_jobtitle = array();
+            // foreach($users as $user) {
+            //     $user_id[] = $user->id; 
+            //     $user_name[] = $user->name; 
+            //     $user_jobtitle[] = $user->job_title; 
+            // } 
             
             // $users = $prrequest->mainGroup->approval->stepapprovals->users->pluck('name', 'id', 'job_title');
         // } else if (!in_array($prrequest->approval_id, [3,4])) {
@@ -255,19 +261,22 @@ class PrRequestsController extends Controller
         //     abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
         }
 
-        return view('requests.send', compact('prrequest', 'stepname', 'user_id','user_name','job_title'));
+        return view('pages.requests.send', compact('prrequest', 'stepname', 'users','user_id','user_name','job_title'));
     }
 
     public function send(Request $request, PrRequest $prrequest)
     {
-        abort_if(!auth()->user()->is_admin, Response::HTTP_FORBIDDEN, '403 Forbidden');
+        // abort_if(!auth()->user()->is_admin, Response::HTTP_FORBIDDEN, '403 Forbidden');
         
         // $status = Approval::where('approval_name','Pending')->first();
 
         if ($prrequest->approval_id == 1) {
-            $stepname = PrRequest::find($id)->mainGroup->approval->stepapprovals->pluck('step_name')->first();
-            $step = PrRequest::find($id)->mainGroup->approval->stepapprovals->first();
+            $approval_id = $prrequest->mainGroup->approval->id;
+            $stepname = $prrequest->mainGroup->approval->stepapprovals->pluck('step_name')->first();
+            $step_id = $prrequest->mainGroup->approval->stepapprovals->pluck('id')->first();
+            $step = $prrequest->mainGroup->approval->stepapprovals->first();
             $users = $step->users;
+            $column = 'userstep_id';
             $user_id = array();
             $user_name = array();
             $user_jobtitle = array();
@@ -289,9 +298,12 @@ class PrRequestsController extends Controller
         // ]);
 
         $prrequest->update([
-            // $stepnumber => $request->user_id,
-            'approval_id' => $stepname
+            $column => $request->user_id,
+            'approval_id' => $approval_id,
+            'stepapproval_id' => $step_id,
         ]);
+
+        Toastr::success('suceess','Purchase Request has been sent for'.$stepname);
 
         return redirect()->route('requests.index')->with('message', 'Purchase Request has been sent for step_name');
     }
