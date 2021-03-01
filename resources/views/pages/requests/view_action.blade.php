@@ -55,7 +55,7 @@
                         <tr>
                             <th>Status</th>
                             <th>
-                                Pending <span class="badge p-1 badge-secondary">{{ $user->is_user && $prrequest->approval_id < 8 ? $defaultStatus->approval_name : $nextstep->step_name }} </span>
+                                {{ $user->is_user && $prrequest->approval_id < 3 ? $defaultStatus->approval_name : $prrequest->approval->approval_name }}
                             </th>
                         </tr>
                     </tbody>
@@ -88,7 +88,7 @@
                                 {{ $prrequest->mainGroup->group_name }}
                             </th>
                         </tr>
-                        
+
                     </tbody>
                 </table>
             </div>
@@ -200,12 +200,12 @@
                             {{$prrequest->mainGroup->approval->stepapprovals->step_name}}
                         @endif
                     </a>
-                    @elseif(($prrequest->approval_id != 1))
-                        <a class="btn btn-success" href="{{ route('requests.showAnalyze', $prrequest->id) }}">
-                            Submit to {{$nextstep->step_name}}
-                        </a>
+                    {{-- @elseif(($user->is_analyst && $loanApplication->status_id == 2) || ($user->is_cfo && $loanApplication->status_id == 5))
+                        <a class="btn btn-success" href="{{ route('admin.loan-applications.showAnalyze', $loanApplication->id) }}">
+                            Submit analysis
+                        </a> --}}
                     @endif
-    
+
                 </div>
             </div>
 

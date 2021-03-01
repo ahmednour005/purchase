@@ -26,9 +26,10 @@ class UserController extends Controller
     public  function  edit($id){
 
         $user = User::find($id);
-        $users_count=  User::all()->count();
+        $users_count=  User::count();
+        $users = User::all();
 
-        return view('pages.users.edit',compact('user','users_count'));
+        return view('pages.users.edit',compact('user','users','users_count'));
 
     }
     public function update(Request $request,$id){

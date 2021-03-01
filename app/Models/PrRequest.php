@@ -4,12 +4,12 @@ namespace App\Models;
 
 use App\Observers\PrRequestObserver;
 use Illuminate\Database\Eloquent\Model;
-use OwenIt\Auditing\Contracts\Auditable;
+// use OwenIt\Auditing\Contracts\Auditable;
 
 
-class PrRequest extends Model implements Auditable
+class PrRequest extends Model 
 {
-    use \OwenIt\Auditing\Auditable;
+    // use \OwenIt\Auditing\Auditable;
 
     protected $fillable = [
         'date',

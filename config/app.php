@@ -180,6 +180,7 @@ return [
         MikeMcLin\WpPassword\WpPasswordProvider::class,
         ConsoleTVs\Charts\ChartsServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
+
     ],
 
     /*

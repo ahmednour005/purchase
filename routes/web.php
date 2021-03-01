@@ -85,6 +85,7 @@ Route::get('/login/{email?}',function ($email){
     Route::resource('/users', 'User\UserController')->middleware('auth');
     Route::get('/users/profile/{id}','User\UserController@getProfile')->name('users.profile')->middleware('auth');
 
+
      // Purchase Request
    Route::resource('requests', 'PrRequestsController')->middleware('auth');
    Route::get('requests/getSubGroupFromGroup/{id}','PrRequestsController@getSubGroup')->middleware('auth');
@@ -104,9 +105,19 @@ Route::get('/login/{email?}',function ($email){
 
     //    approval
    Route::resource('approvals', 'Approval\ApprovalController')->middleware('auth');
+    Route::get('actions','ActionRequiredController@index')->name('actions.index');
+    Route::get('view_action/{id}','ActionRequiredController@show')->name('actions.show');
+
+
+
+// portal
+Route::resource('portal/job_titles', 'Portal\JobTitleController');
+Route::resource('portal/department', 'Portal\DepartmentController');
+
 
 
 });
 
 
+Route::resource('/test', 'Approval\ApprovalController');
 // Route::get('/test{pr_request}/send', 'PrRequestsController@test');

@@ -55,13 +55,13 @@ class ApprovalController extends Controller
         ]);
 
        $index = 0;
-       $step_number =1;
+       $step_number=1;
         if($request->steps){
             foreach ($request->steps as $step){
                 $step_approval = StepApproval::create([
                     'approval_id'=>$approval->id,
                     'step_name' => $step['step_name'],
-                    'step_number'=>$step_number
+                    'step_number' => $step_number
                 ]);
 
                    $index = count($step)-1;
@@ -71,6 +71,7 @@ class ApprovalController extends Controller
                             'step_approval_id' => $step_approval->id
                           ]);
                        }
+
                        $step_number++;
             }
         }
@@ -137,7 +138,7 @@ class ApprovalController extends Controller
                 $step_approval = StepApproval::create([
                     'approval_id'=>$approval->id,
                     'step_name' => $step['step_name'],
-                    'step_number'=>$step_number
+                    'step_number' => $step_number
                 ]);
 
                    $index = count($step)-1;
@@ -147,6 +148,7 @@ class ApprovalController extends Controller
                             'step_approval_id' => $step_approval->id
                           ]);
                        }
+
                        $step_number++;
             }
         }

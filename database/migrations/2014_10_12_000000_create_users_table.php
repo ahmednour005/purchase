@@ -21,6 +21,11 @@ class CreateUsersTable extends Migration
             $table->string('location')->nullable();
             $table->text('job_title')->nullable();
             $table->text('direct_manager')->nullable();
+            $table->text('department')->nullable();
+            $table->text('phone')->nullable();
+            $table->text('level')->nullable();
+            $table->text('code')->nullable();
+            $table->text('workgroup')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
