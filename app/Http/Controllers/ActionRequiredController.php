@@ -16,7 +16,7 @@ class ActionRequiredController extends Controller
         //dd($prrequests);
         // dd($prrequests);
         // $totalBudget = PrRequest::prrequest()->requestitems->totalbudget;
-        $defaultStatus = Approval::find(0);
+        $defaultStatus = Approval::where('approval_name','Pending')->first();
         $user = auth()->user();
         $users = User::all();
         $users_count=  $users->count();
@@ -60,7 +60,7 @@ class ActionRequiredController extends Controller
         // }
         // dd($laststepnumber);
 
-        $defaultStatus = Approval::find(0);
+        $defaultStatus = Approval::where('approval_name','Pending')->first();
 
         $users = User::all();
         $users_count=  $users->count();

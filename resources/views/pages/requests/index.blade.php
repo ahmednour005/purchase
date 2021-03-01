@@ -77,14 +77,21 @@
                             <td>
                                 {{ $prrequest->request_number ?? '' }}
                             </td>
-                            <td>
-                                {{ $user->is_user && $prrequest->approval_id < 8 ? $defaultStatus->approval_name : $prrequest->approval->approval_name }}
+                            <td> 
+                                @if ($prrequest->approval->approval_name == 'Pending')
+                                    {{$prrequest->approval->approval_name}} To Start Cycle 
+
+                                @elseif($prrequest->approval->approval_name != 'Pending')
+                                    
+                                    Pending {{$approvals->find($prrequest->approval_id)->stepapprovals->find($prrequest->stepapproval_id)->step_name}} 
+                                
+                                @endif
                             </td>
                             <td class="requests-btn">
-                                @if($user->is_admin || in_array($prrequest->approval_id, [1]))
+                                @if($user->hasRole('super_admin1')|| in_array($prrequest->approval_id, [1]))
                                 <a class="btn btn-xs btn-success" href="{{ route('requests.showSend', $prrequest->id) }}">
                                     Send to
-                                    @if($prrequest->approval_id == 1)
+                                @if ($prrequest->approval->approval_name == 'Pending')
                                         {{$prrequest->mainGroup->approval->approval_name}}
                                      {{-- @foreach($prrequest->mainGroup->approval->stepapprovals as $approv)
                                         @foreach ($approv->users as $user)
@@ -92,11 +99,40 @@
                                         @endforeach
                                      @endforeach --}}
                                     @else
-                                        CFO
+                                    @php
+                                        $nextid = $approvals->find($prrequest->approval_id)->stepapprovals->where('id','>',$prrequest->stepapproval_id)->min('id')
+                                    @endphp
+                                        {{$approvals->find($prrequest->approval_id)->stepapprovals->find($nextid)->step_name}}
                                     @endif
                                 </a>
-                                @elseif(( !$prrequest->approval_id == 1))
-                                    <a class="btn btn-xs btn-success" href="{{ route('admin.loan-applications.showAnalyze', $prrequest->id) }}">
+                                @php
+                                    $userstepid = array(); 
+                                    // $approval_id = $prrequest->mainGroup->approval->id;
+                                    // $currentapproval = $approvals->find($prrequest->approval_id); 
+                                    // $currentstep = $currentapproval->stepapprovals->find($currentapproval);
+                                    // $users = $currentstep->users;
+                                    // $step = $prrequest->mainGroup->approval->stepapprovals->find($prrequest->stepapproval_id);
+                                    // $users = $step->users;  
+                                    // foreach($users as $user) {
+                                    //     $userstepid[] = $user->id; 
+                                    // }
+
+                                    // print_r($userstepid);
+                                @endphp
+                                @foreach($prrequest->mainGroup->approval->stepapprovals as $step)
+                                    {{-- @foreach ($steps->users as $userstep) --}}
+                                        {{-- @foreach ($step as $userstep) --}}
+                                            {{$step}}    
+                                        {{-- @endforeach         --}}
+                                    {{-- @endforeach --}}
+                                @endforeach 
+                                @elseif(in_array($user->id , $userstepid) && $prrequest->approval->approval_name != 'Pending' || ($user->is_cfo && $prrequest->status_id == 5))
+                                    @foreach($prrequest->mainGroup->approval->stepapprovals as $step)
+                                        @foreach ($step->users as $userstep)
+                                            {{$userstep->id}}
+                                        @endforeach
+                                    @endforeach
+                                    <a class="btn btn-xs btn-success" href="{{ route('requests.showAnalyze', $prrequest->id) }}">                                        
                                         Submit analysis
                                     </a>
                                 @endif

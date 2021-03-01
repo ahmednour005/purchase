@@ -31,11 +31,30 @@ class PrRequestsController extends Controller
         // dd($prrequests);
         // $totalBudget = PrRequest::prrequest()->requestitems->totalbudget;
         $defaultStatus = Approval::where('approval_name','Pending')->first();
+        $approvals = Approval::all();
+        $stepapprovals = StepApproval::all();
         $user = auth()->user();
         $users = User::all();
         $users_count=  $users->count();
         // dd($defaultStatus);
-        return view('pages.requests.index', compact('prrequests', 'defaultStatus', 'user','users_count'));
+        // $currentapproval = array();
+        // $currentstep = array();
+        // foreach($prrequests as $prrequest) {
+        //     $currentapproval []= Approval::find($prrequest->approval_id); 
+        //     $currentstep []= $currentapproval->stepapprovals->find($currentapproval); 
+        
+            // // Next ID 
+            // $next_id = $currentapproval->stepapprovals->where('id','>',$currentstep->id)->min('id');
+            // $nextstep = $currentapproval->stepapprovals->find($next_id); 
+
+            // // Previous ID
+            // $prev_id = $currentapproval->stepapprovals->where('id','<',$currentstep->id)->max('id');
+            // $prevstep = $currentapproval->stepapprovals->find($prev_id); 
+            // // Last Step
+            // $laststep = $currentapproval->stepapprovals->last();  
+        // }
+
+        return view('pages.requests.index', compact('prrequests', 'approvals', 'currentstep','stepapprovals','defaultStatus', 'user','users_count'));
     }
 
 
@@ -210,8 +229,8 @@ class PrRequestsController extends Controller
         $currentstep = $currentapproval->stepapprovals->find($currentapproval); 
         
         // Next ID 
-        $next_id = $currentapproval->stepapprovals->where('id','>',$currentstep->id)->min('id');
-        $nextstep = $currentapproval->stepapprovals->find($next_id); 
+        $next_id = $prrequest->approval->stepapprovals->where('id','>',$currentstep->id)->min('id');
+        $nextstep = $prrequest->approval->stepapprovals->find($next_id); 
 
         // Previous ID
         $prev_id = $currentapproval->stepapprovals->where('id','<',$currentstep->id)->max('id');
@@ -219,9 +238,12 @@ class PrRequestsController extends Controller
         // Last Step
         $laststep = $currentapproval->stepapprovals->last();  
         
-        // dd($currentstep);
+        // $nextid = $prrequest->approval->stepapprovals->where('id','>',$prrequest->stepapproval_id)->min('id');
+        // $nextstep2 = $prrequest->approval->find($prrequest->approval_id)->stepapprovals->find($nextid)->step_name;
+        // dd($nextstep2);
         // dd($currentapproval);
-        
+            
+
         return view('pages.requests.show', compact('prrequest', 'requestitems', 'nextstep','defaultStatus', 'user','indexCount','users_count'));
     }
 
@@ -353,7 +375,10 @@ class PrRequestsController extends Controller
     public function showAnalyze(PrRequest $prrequest)
     {
         $user = auth()->user();
-
+        $approval_id = $prrequest->mainGroup->approval->id;
+        $currentapproval = Approval::find($prrequest->approval_id); 
+        $currentstep = $currentapproval->stepapprovals->find($currentapproval);
+        $users = $currentstep->users;
         // abort_if(
         //     (!$user->is_analyst || $loanApplication->status_id != 2) && (!$user->is_cfo || $loanApplication->status_id != 5),
         //     Response::HTTP_FORBIDDEN,
