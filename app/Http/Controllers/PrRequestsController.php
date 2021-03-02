@@ -122,10 +122,7 @@ class PrRequestsController extends Controller
             'project' => $request->project,
             'site' => $request->site,
             'user_location' => $request->user_location,
-            'user_id' => Auth::id(),
-            'userstep_id' => Auth::id(),
-            'approval_id' => $processingStatus,
-            'stepapproval_id' => 1,
+            'created_by_id' => Auth::id(),
         ]);
 
 
@@ -180,7 +177,8 @@ class PrRequestsController extends Controller
     public function show($id)
     {
         $prrequest = PrRequest::find($id);
-
+        // $userstep_ids = json_encode($prrequest->userstep_ids);
+        // dd($prrequest->userstep_ids);
         $requestitems = $prrequest->requestitems()->get();
         // $step_id = PrRequest::find($id)->mainGroup->approval->stepapprovals->first();
         $stepname = PrRequest::find($id)->mainGroup->approval->stepapprovals->pluck('step_name')->first();
@@ -236,12 +234,12 @@ class PrRequestsController extends Controller
         $prev_id = $currentapproval->stepapprovals->where('id','<',$currentstep->id)->max('id');
         $prevstep = $currentapproval->stepapprovals->find($prev_id); 
         // Last Step
-        $laststep = $currentapproval->stepapprovals->last();  
+        $laststep = $currentapproval->stepapprovals->max('id');  
         
         // $nextid = $prrequest->approval->stepapprovals->where('id','>',$prrequest->stepapproval_id)->min('id');
         // $nextstep2 = $prrequest->approval->find($prrequest->approval_id)->stepapprovals->find($nextid)->step_name;
         // dd($nextstep2);
-        // dd($currentapproval);
+        dd($laststep);
             
 
         return view('pages.requests.show', compact('prrequest', 'requestitems', 'nextstep','defaultStatus', 'user','indexCount','users_count'));
@@ -313,15 +311,19 @@ class PrRequestsController extends Controller
         return view('pages.requests.send', compact('prrequest', 'stepname', 'users','user_id','user_name','job_title'));
     }
 
-    public function send(Request $request, PrRequest $prrequest)
+    public function send(Request $requestcome, PrRequest $prrequest)
     {
+        // dd($request);
+        // $request = json_decode($requestcome);
         // abort_if(!auth()->user()->is_admin, Response::HTTP_FORBIDDEN, '403 Forbidden');
-
+        $userid = auth()->user();
         // $status = Approval::where('approval_name','Pending')->first();
         $approval_id = $prrequest->mainGroup->approval->id;
 
         $currentapproval = Approval::find($prrequest->approval_id); 
         $currentstep = $currentapproval->stepapprovals->find($currentapproval);
+        
+        
         // Next ID 
         $next_id = $currentapproval->stepapprovals->where('id','>',$currentstep->id)->min('id');
         $nextstep = $currentapproval->stepapprovals->find($next_id); 
@@ -330,28 +332,21 @@ class PrRequestsController extends Controller
         $prev_id = $currentapproval->stepapprovals->where('id','<',$currentstep->id)->max('id');
         $prevstep = $currentapproval->stepapprovals->find($prev_id); 
         // Last Step
-        $laststep = $currentapproval->stepapprovals->last();
+        $laststep = $currentapproval->stepapprovals->max('id');
 
         if ($prrequest->approval_id == 1) {
             $stepname = $prrequest->mainGroup->approval->stepapprovals->pluck('step_name')->first();
             $step_id = $prrequest->mainGroup->approval->stepapprovals->pluck('id')->first();
             $step = $prrequest->mainGroup->approval->stepapprovals->first();
             $users = $step->users;
-            $column = 'userstep_id';
-            // $user_id = array();
-            // $user_name = array();
-            // $user_jobtitle = array();
-            // foreach($users as $user) {
-            //     $user_id[] = $user->id; 
-            //     $user_name[] = $user->name; 
-            //     $user_jobtitle[] = $user->job_title;
-            
+            $userstep_ids  = $users->pluck('id');
+            $column = 'userstep_ids';   
         }
          else if (!in_array($prrequest->approval_id, [1]) && !$laststep) {
-            $column = 'userstep_id';
-            $step_id = $next_id;
-            $users  = $nextstep->users->pluck('id');
-            // $status = ;
+            $column = 'userstep_ids';
+            $next_id = $currentapproval->stepapprovals->where('id','>',$currentstep->id)->min('id');
+            $nextstep = $currentapproval->stepapprovals->find($next_id);
+            $userstep_ids  = $nextstep->users->pluck('id');
         } 
         // else {
         //     abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
@@ -362,10 +357,15 @@ class PrRequestsController extends Controller
         // ]);
 
         $prrequest->update([
-            $column => $request->user_id,
+            $column => $userstep_ids,
             'approval_id' => $approval_id,
             'stepapproval_id' => $step_id,
+            'userstepapproved_id' => $userid->id,
         ]);
+
+        // $prrequest->update([
+            // $column => $userstep_ids,
+        // ]);
 
         Toastr::success('sucess','Purchase Request has been sent for'.$stepname);
 
@@ -385,24 +385,61 @@ class PrRequestsController extends Controller
         //     '403 Forbidden'
         // );
 
-        return view('requests.analyze', compact('prrequest'));
+        return view('pages.requests.analyze', compact('prrequest'));
     }
 
     public function analyze(Request $request, PrRequest $prrequest)
     {
         $user = auth()->user();
 
-        // if ($prrequest->approval_id != 1) {
-        //     $currentapproval_id = $prrequest->approval_id;
-        //     $currentstep_id = $prrequest->stepapproval_id;
-        //     $currentstep_name = $prrequest->approval->stepapprovals->find($currentstep_id)->step_name;
-        // if ($user->is_analyst && $prrequest->status_id != 1) {
-        //     $status = $request->has('approve') ? 3 : 4;
-        //     }
-        // }
-        // else if ($user->is_cfo && $loanApplication->status_id == 5) {
-        //     $status = $request->has('approve') ? 6 : 7;
-        // }
+        $approval_id = $prrequest->mainGroup->approval->id;
+        $column = 'userstep_ids';
+
+        $currentapproval = Approval::find($prrequest->approval_id); 
+        $currentstep = $currentapproval->stepapprovals->find($currentapproval);
+        // Next ID 
+        $next_id = $currentapproval->stepapprovals->where('id','>',$currentstep->id)->min('id');
+        $nextstep = $currentapproval->stepapprovals->find($next_id); 
+
+        // Previous ID
+        $prev_id = $currentapproval->stepapprovals->where('id','<',$currentstep->id)->max('id');
+        $prevstep = $currentapproval->stepapprovals->find($prev_id); 
+        // Last Step
+        $laststep = $currentapproval->stepapprovals->max('id');
+
+        if (in_array($user->id, $prrequest->userstep_ids)  && $prrequest->approval_id != 1 && $next_id!=$laststep||  $user->hasRole('super_admin')) {
+            if ($request->has('approve')){
+                $step_id = $next_id;
+                $step = $nextstep;
+                $users = $step->users;
+                $userstep_ids  = $users->pluck('id');
+                $status = Approval::where('approval_name','approved')->first()->approval_name; 
+            }else{
+                $status = Approval::where('approval_name','PR Rejected')->first()->approval_name; 
+                $approval_id = Approval::where('approval_name','PR Rejected')->first()->id;
+                $step_id = 1;
+                $step = $currentstep;
+                $users = $step->users;
+                $userstep_ids  = $user->id; 
+            }
+
+        }
+        else if (in_array($user->id, $prrequest->userstep_ids) && $prrequest->approval_id != 1 && $next_id==$laststep ||  $user->hasRole('super_admin')) {
+            if ($request->has('approve')){
+                $status = Approval::where('approval_name','PR Approved')->first()->approval_name; 
+                $approval_id = Approval::where('approval_name','PR Approved')->first()->id;
+                $step_id = null;
+                // $step = $nextstep;
+                // $users = $step->users;
+                $userstep_ids  = null;
+            }else{
+                $status = Approval::where('approval_name','PR Rejected')->first()->approval_name; 
+                $step_id = $currentstep->id;
+                $step = $currentstep;
+                $users = $step->users;
+                $userstep_ids  = null;
+            }
+        }
         // else {
         //     abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
         // }
@@ -411,17 +448,20 @@ class PrRequestsController extends Controller
         //     'comment_text' => 'required'
         // ]);
 
-        // $prrequest->comments()->create([
-        //     'comment_text' => $request->comment_text,
-        //     'user_id'      => $user->id
-        // ]);
+        $prrequest->comments()->create([
+            'comment_text' => $request->comment_text,
+            'user_id'      => $user->id
+        ]);
 
-        // $prrequest->update([
-        //     'approval_id' => $status,
-        //     'stepapproval_id' => $status,
-        // ]);
+        $prrequest->update([
+            $column => $userstep_ids,
+            'approval_id' => $approval_id,
+            'stepapproval_id' => $step_id,
+            'userstepapproved_id' => $user->id,
+            'approval_name' => $status,
+        ]);
 
-        // return redirect()->route('requests.index')->with('message', 'Analysis has been submitted');
+        return redirect()->route('requests.index')->with('message', 'Analysis has been submitted');
     }
 
 }

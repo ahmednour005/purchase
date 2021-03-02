@@ -4,12 +4,12 @@ namespace App\Models;
 
 use App\Observers\PrRequestObserver;
 use Illuminate\Database\Eloquent\Model;
-// use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Contracts\Auditable;
 
 
-class PrRequest extends Model 
+class PrRequest extends Model implements Auditable
 {
-    // use \OwenIt\Auditing\Auditable;
+    use \OwenIt\Auditing\Auditable;
 
     protected $fillable = [
         'date',
@@ -19,10 +19,12 @@ class PrRequest extends Model
         'site',
         'main_group_id',
         'user_location',
-        'user_id',
-        'userstep_id',
+        'created_by_id',
+        'userstepapproved_id',
         'approval_id',
         'stepapproval_id',
+        'userstep_ids',
+        'approval_name',
     ];
 
     /**
@@ -31,8 +33,23 @@ class PrRequest extends Model
      * @var array
      */
     protected $auditInclude = [
-        'title',
-        'content',
+        'date',
+        'request_number',
+        'department',
+        'project',
+        'site',
+        'main_group_id',
+        'user_location',
+        'created_by_id',
+        'userstepapproved_id',
+        'approval_id',
+        'stepapproval_id',
+        'userstep_ids',
+        'approval_name',
+    ];
+
+    protected $casts = [
+        'userstep_ids' => 'array'
     ];
 
     protected static function booted()
@@ -45,7 +62,7 @@ class PrRequest extends Model
     }
 
     public function user(){
-        return $this->belongsTo('App\User');
+        return $this->belongsTo('App\User', 'created_by_id');
     }
 
     public function mainGroup()
@@ -56,5 +73,10 @@ class PrRequest extends Model
     public function approval()
     {
         return $this->belongsTo('App\Models\Approval', 'approval_id');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany('App\Comment');
     }
 }

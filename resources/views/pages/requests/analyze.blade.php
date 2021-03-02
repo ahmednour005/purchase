@@ -9,7 +9,7 @@
             <form method="POST" action="{{ route("requests.analyze", $prrequest) }}" enctype="multipart/form-data">
                 @csrf
                 <div class="form-group">
-                    <label for="description">{{ trans('cruds.comment.title_singular') }}</label>
+                    <label for="description">Comment</label>
                     <textarea class="form-control {{ $errors->has('comment_text') ? 'is-invalid' : '' }}" name="comment_text" id="comment_text">{{ old('comment_text') }}</textarea>
                     {{-- @if($errors->has('comment_text'))
                         <div class="invalid-feedback">
@@ -21,9 +21,9 @@
                     <button class="btn btn-success" name="approve" type="submit">
                         Approve
                     </button>
-                    {{-- <button class="btn btn-danger" name="reject" type="submit">
+                    <button class="btn btn-danger" name="reject" type="submit">
                         Reject
-                    </button> --}}
+                    </button>
                 </div>
             </form>
         </div>

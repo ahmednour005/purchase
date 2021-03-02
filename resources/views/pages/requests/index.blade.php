@@ -80,10 +80,18 @@
                             <td> 
                                 @if ($prrequest->approval->approval_name == 'Pending')
                                     {{$prrequest->approval->approval_name}} To Start Cycle 
-
                                 @elseif($prrequest->approval->approval_name != 'Pending')
+                                    @if($prrequest->approval->approval_name == 'PR Rejected')
+                                    {{$prrequest->approval_name}}
+                                    @elseif ($approvals->find($prrequest->approval_id)->stepapprovals->find($prrequest->stepapproval_id)->step_number ==1)
+                                        Pending {{$approvals->find($prrequest->approval_id)->stepapprovals->find($prrequest->stepapproval_id)->step_name}} 
+                                    @elseif($approvals->find($prrequest->approval_id)->stepapprovals->find($prrequest->stepapproval_id)->step_number !=1)
+                                        @php
+                                            $prev_id = $approvals->find($prrequest->approval_id)->stepapprovals->where('id','<',$prrequest->stepapproval_id)->max('id');
+                                        @endphp
+                                        {{$approvals->find($prrequest->approval_id)->stepapprovals->find($prev_id)->step_name}} {{$prrequest->approval_name}} 
                                     
-                                    Pending {{$approvals->find($prrequest->approval_id)->stepapprovals->find($prrequest->stepapproval_id)->step_name}} 
+                                    @endif 
                                 
                                 @endif
                             </td>
@@ -105,33 +113,17 @@
                                         {{$approvals->find($prrequest->approval_id)->stepapprovals->find($nextid)->step_name}}
                                     @endif
                                 </a>
-                                @php
-                                    $userstepid = array(); 
-                                    // $approval_id = $prrequest->mainGroup->approval->id;
-                                    // $currentapproval = $approvals->find($prrequest->approval_id); 
-                                    // $currentstep = $currentapproval->stepapprovals->find($currentapproval);
-                                    // $users = $currentstep->users;
-                                    // $step = $prrequest->mainGroup->approval->stepapprovals->find($prrequest->stepapproval_id);
-                                    // $users = $step->users;  
-                                    // foreach($users as $user) {
-                                    //     $userstepid[] = $user->id; 
-                                    // }
-
-                                    // print_r($userstepid);
-                                @endphp
-                                @foreach($prrequest->mainGroup->approval->stepapprovals as $step)
-                                    {{-- @foreach ($steps->users as $userstep) --}}
-                                        {{-- @foreach ($step as $userstep) --}}
-                                            {{$step}}    
-                                        {{-- @endforeach         --}}
-                                    {{-- @endforeach --}}
-                                @endforeach 
-                                @elseif(in_array($user->id , $userstepid) && $prrequest->approval->approval_name != 'Pending' || ($user->is_cfo && $prrequest->status_id == 5))
-                                    @foreach($prrequest->mainGroup->approval->stepapprovals as $step)
-                                        @foreach ($step->users as $userstep)
-                                            {{$userstep->id}}
-                                        @endforeach
-                                    @endforeach
+                               
+                                {{-- @php
+                                    $userstep_ids = array();
+                                    $users = $prrequest->userstep_ids 
+                                    //$user->hasRole('super_admin')
+                                    foreach ($users as $key => $value) {
+                                        # code...
+                                    }
+                                    
+                                @endphp --}}
+                                @elseif( in_array($user->id, $prrequest->userstep_ids) && $prrequest->approval->approval_name != 'Pending' || $user->hasRole('super_admin'))
                                     <a class="btn btn-xs btn-success" href="{{ route('requests.showAnalyze', $prrequest->id) }}">                                        
                                         Submit analysis
                                     </a>
