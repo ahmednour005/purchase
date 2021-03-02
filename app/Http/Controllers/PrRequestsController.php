@@ -428,16 +428,17 @@ class PrRequestsController extends Controller
             if ($request->has('approve')){
                 $status = Approval::where('approval_name','PR Approved')->first()->approval_name; 
                 $approval_id = Approval::where('approval_name','PR Approved')->first()->id;
-                $step_id = null;
+                $step_id = 1;
                 // $step = $nextstep;
                 // $users = $step->users;
-                $userstep_ids  = null;
+                $userstep_ids  = $prrequest->created_by_id;
             }else{
                 $status = Approval::where('approval_name','PR Rejected')->first()->approval_name; 
-                $step_id = $currentstep->id;
+                $approval_id = Approval::where('approval_name','PR Rejected')->first()->id;
+                $step_id = 1;
                 $step = $currentstep;
                 $users = $step->users;
-                $userstep_ids  = null;
+                $userstep_ids  = $user->id;
             }
         }
         // else {
