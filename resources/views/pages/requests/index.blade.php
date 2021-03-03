@@ -82,7 +82,9 @@
                                     {{$prrequest->approval->approval_name}} To Start Cycle 
                                 @elseif($prrequest->approval->approval_name != 'Pending')
                                     @if($prrequest->approval->approval_name == 'PR Rejected')
-                                    {{$prrequest->approval_name}}
+                                        {{$prrequest->approval_name}}
+                                    @elseif($prrequest->approval->approval_name == 'PR Approved')
+                                        {{$prrequest->approval_name}}
                                     @elseif ($approvals->find($prrequest->approval_id)->stepapprovals->find($prrequest->stepapproval_id)->step_number ==1)
                                         Pending {{$approvals->find($prrequest->approval_id)->stepapprovals->find($prrequest->stepapproval_id)->step_name}} 
                                     @elseif($approvals->find($prrequest->approval_id)->stepapprovals->find($prrequest->stepapproval_id)->step_number !=1)
@@ -99,13 +101,8 @@
                                 @if($user->hasRole('super_admin1')|| in_array($prrequest->approval_id, [1]))
                                 <a class="btn btn-xs btn-success" href="{{ route('requests.showSend', $prrequest->id) }}">
                                     Send to
-                                @if ($prrequest->approval->approval_name == 'Pending')
+                                    @if ($prrequest->approval->approval_name == 'Pending')
                                         {{$prrequest->mainGroup->approval->approval_name}}
-                                     {{-- @foreach($prrequest->mainGroup->approval->stepapprovals as $approv)
-                                        @foreach ($approv->users as $user)
-                                           {{$user->name}}
-                                        @endforeach
-                                     @endforeach --}}
                                     @else
                                     @php
                                         $nextid = $approvals->find($prrequest->approval_id)->stepapprovals->where('id','>',$prrequest->stepapproval_id)->min('id')
@@ -114,16 +111,7 @@
                                     @endif
                                 </a>
                                
-                                {{-- @php
-                                    $userstep_ids = array();
-                                    $users = $prrequest->userstep_ids 
-                                    //$user->hasRole('super_admin')
-                                    foreach ($users as $key => $value) {
-                                        # code...
-                                    }
-                                    
-                                @endphp --}}
-                                @elseif( in_array($user->id, $prrequest->userstep_ids) && $prrequest->approval->approval_name != 'Pending' || $user->hasRole('super_admin'))
+                                @elseif($user->hasRole('super_admin') || in_array($user->id, $prrequest->userstep_ids) && $prrequest->approval->approval_name != 'Pending' )
                                     <a class="btn btn-xs btn-success" href="{{ route('requests.showAnalyze', $prrequest->id) }}">                                        
                                         Submit analysis
                                     </a>

@@ -182,6 +182,8 @@ class PrRequestsController extends Controller
         $requestitems = $prrequest->requestitems()->get();
         // $step_id = PrRequest::find($id)->mainGroup->approval->stepapprovals->first();
         $stepname = PrRequest::find($id)->mainGroup->approval->stepapprovals->pluck('step_name')->first();
+        $approvals = Approval::all();
+
         // $laststepnumber = PrRequest::find($id)->mainGroup->approval->stepapprovals->pluck('step_number')->last();
         // $users = $step_id->users;
         // $arr = array();
@@ -224,25 +226,34 @@ class PrRequestsController extends Controller
         // $currentapproval_id = $prrequest->approval_id;
         // $currentstep_id = $prrequest->stepapproval_id;
         $currentapproval = Approval::find($prrequest->approval_id); 
-        $currentstep = $currentapproval->stepapprovals->find($currentapproval); 
+        $currentstep = $currentapproval->stepapprovals->find($prrequest->stepapproval_id); 
+        // $laststep_id = $currentapproval->stepapprovals->max('id');
+        // $next_id = $prrequest->approval->stepapprovals->where('id','>',$currentstep->id)->min('id');
+        // $nextstep = $prrequest->approval->stepapprovals->find($next_id); 
         
-        // Next ID 
-        $next_id = $prrequest->approval->stepapprovals->where('id','>',$currentstep->id)->min('id');
-        $nextstep = $prrequest->approval->stepapprovals->find($next_id); 
-
+        // if ($next_id = $laststep_id){
+        //     $next_id = $laststep_id;
+        //     $nextstep = $currentapproval->stepapprovals->find($next_id);
+        //     $prev_id = $laststep_id;
+        //     $prevstep = $currentapproval->stepapprovals->find($prev_id);
+        // } else {
+        //     $next_id = $prrequest->approval->stepapprovals->where('id','>',$currentstep->id)->min('id');
+        //     $nextstep = $prrequest->approval->stepapprovals->find($next_id); 
+        // }
+        
         // Previous ID
-        $prev_id = $currentapproval->stepapprovals->where('id','<',$currentstep->id)->max('id');
-        $prevstep = $currentapproval->stepapprovals->find($prev_id); 
+        // $prev_id = $currentapproval->stepapprovals->where('id','<',$currentstep->id)->max('id');
+        // $prevstep = $currentapproval->stepapprovals->find($prev_id); 
         // Last Step
-        $laststep = $currentapproval->stepapprovals->max('id');  
+        // $laststep = $currentapproval->stepapprovals->max('id');  
         
         // $nextid = $prrequest->approval->stepapprovals->where('id','>',$prrequest->stepapproval_id)->min('id');
         // $nextstep2 = $prrequest->approval->find($prrequest->approval_id)->stepapprovals->find($nextid)->step_name;
         // dd($nextstep2);
-        dd($laststep);
+        // dd($laststep);
             
 
-        return view('pages.requests.show', compact('prrequest', 'requestitems', 'nextstep','defaultStatus', 'user','indexCount','users_count'));
+        return view('pages.requests.show', compact('prrequest', 'requestitems', 'currentstep','approvals', 'user','indexCount','users_count'));
     }
 
     /**
@@ -320,19 +331,36 @@ class PrRequestsController extends Controller
         // $status = Approval::where('approval_name','Pending')->first();
         $approval_id = $prrequest->mainGroup->approval->id;
 
-        $currentapproval = Approval::find($prrequest->approval_id); 
-        $currentstep = $currentapproval->stepapprovals->find($currentapproval);
-        
+        // $currentapproval = Approval::find($prrequest->approval_id); 
+        // $currentstep = $currentapproval->stepapprovals->find($prrequest->stepapproval_id);
         
         // Next ID 
-        $next_id = $currentapproval->stepapprovals->where('id','>',$currentstep->id)->min('id');
-        $nextstep = $currentapproval->stepapprovals->find($next_id); 
+        if (Approval::find($prrequest->approval_id)->approval_name == 'PR Approved'){
+            $currentapproval = Approval::find($prrequest->approval_id); 
+            $currentstep = $currentapproval->stepapprovals->find($prrequest->stepapproval_id);
+            $next_id = 1;
+            $nextstep = $currentapproval->stepapprovals->find($next_id);
+            $prev_id = 1;
+            $prevstep = $currentapproval->stepapprovals->find($prev_id); 
+        }else if (Approval::find($prrequest->approval_id)->approval_name == 'PR Rejected') {
+            $currentapproval = Approval::find($prrequest->approval_id); 
+            $currentstep = $currentapproval->stepapprovals->find($prrequest->stepapproval_id);
+            $next_id = 1;
+            $nextstep = $currentapproval->stepapprovals->find($next_id);
+            $prev_id = 1;
+            $prevstep = $currentapproval->stepapprovals->find($prev_id);
+        }else if (Approval::find($prrequest->approval_id)->approval_name != 'Pending'){
+            $currentapproval = Approval::find($prrequest->approval_id); 
+            $currentstep = $currentapproval->stepapprovals->find($prrequest->stepapproval_id);
+            $next_id = $currentapproval->stepapprovals->where('id','>',$currentstep->id)->min('id');
+            $nextstep = $currentapproval->stepapprovals->find($next_id); 
 
-        // Previous ID
-        $prev_id = $currentapproval->stepapprovals->where('id','<',$currentstep->id)->max('id');
-        $prevstep = $currentapproval->stepapprovals->find($prev_id); 
+            // Previous ID
+            $prev_id = $currentapproval->stepapprovals->where('id','<',$currentstep->id)->max('id');
+            $prevstep = $currentapproval->stepapprovals->find($prev_id); 
+        }
         // Last Step
-        $laststep = $currentapproval->stepapprovals->max('id');
+        // $laststep = $currentapproval->stepapprovals->max('id');
 
         if ($prrequest->approval_id == 1) {
             $stepname = $prrequest->mainGroup->approval->stepapprovals->pluck('step_name')->first();
@@ -396,7 +424,8 @@ class PrRequestsController extends Controller
         $column = 'userstep_ids';
 
         $currentapproval = Approval::find($prrequest->approval_id); 
-        $currentstep = $currentapproval->stepapprovals->find($currentapproval);
+        $currentstep = $currentapproval->stepapprovals->find($prrequest->stepapproval_id);
+        $currentstep_id = $currentapproval->stepapprovals->find($prrequest->stepapproval_id)->id;
         // Next ID 
         $next_id = $currentapproval->stepapprovals->where('id','>',$currentstep->id)->min('id');
         $nextstep = $currentapproval->stepapprovals->find($next_id); 
@@ -405,15 +434,30 @@ class PrRequestsController extends Controller
         $prev_id = $currentapproval->stepapprovals->where('id','<',$currentstep->id)->max('id');
         $prevstep = $currentapproval->stepapprovals->find($prev_id); 
         // Last Step
-        $laststep = $currentapproval->stepapprovals->max('id');
+        $laststep_id = $currentapproval->stepapprovals->max('id');
 
-        if (in_array($user->id, $prrequest->userstep_ids)  && $prrequest->approval_id != 1 && $next_id!=$laststep||  $user->hasRole('super_admin')) {
-            if ($request->has('approve')){
-                $step_id = $next_id;
-                $step = $nextstep;
-                $users = $step->users;
-                $userstep_ids  = $users->pluck('id');
-                $status = Approval::where('approval_name','approved')->first()->approval_name; 
+        if (in_array($user->id, $prrequest->userstep_ids)  && $prrequest->approval_id != 1 ||  $user->hasRole('super_admin')) {
+            if ( $request->has('approve')){
+                if($currentstep_id == $laststep_id){
+                    $status = Approval::where('approval_name','PR Approved')->first()->approval_name; 
+                    $approval_id = Approval::where('approval_name','PR Approved')->first()->id;
+                    $step_id = 1; 
+                    $userstep_ids  = $prrequest->created_by_id; 
+
+                } else if ($next_id <= $laststep_id){
+                    $step_id = $next_id;
+                    $step = $nextstep;
+                    $users = $step->users;
+                    $userstep_ids  = $users->pluck('id');
+                    $status = Approval::where('approval_name','approved')->first()->approval_name; 
+                } else {
+                    $status = Approval::where('approval_name','PR Rejected')->first()->approval_name; 
+                    $approval_id = Approval::where('approval_name','PR Rejected')->first()->id;
+                    $step_id = 1;
+                    $step = $currentstep;
+                    $users = $step->users;
+                    $userstep_ids  = $user->id;  
+                }   
             }else{
                 $status = Approval::where('approval_name','PR Rejected')->first()->approval_name; 
                 $approval_id = Approval::where('approval_name','PR Rejected')->first()->id;
@@ -423,23 +467,6 @@ class PrRequestsController extends Controller
                 $userstep_ids  = $user->id; 
             }
 
-        }
-        else if (in_array($user->id, $prrequest->userstep_ids) && $prrequest->approval_id != 1 && $next_id==$laststep ||  $user->hasRole('super_admin')) {
-            if ($request->has('approve')){
-                $status = Approval::where('approval_name','PR Approved')->first()->approval_name; 
-                $approval_id = Approval::where('approval_name','PR Approved')->first()->id;
-                $step_id = 1;
-                // $step = $nextstep;
-                // $users = $step->users;
-                $userstep_ids  = $prrequest->created_by_id;
-            }else{
-                $status = Approval::where('approval_name','PR Rejected')->first()->approval_name; 
-                $approval_id = Approval::where('approval_name','PR Rejected')->first()->id;
-                $step_id = 1;
-                $step = $currentstep;
-                $users = $step->users;
-                $userstep_ids  = $user->id;
-            }
         }
         // else {
         //     abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
