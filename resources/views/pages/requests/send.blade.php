@@ -12,7 +12,7 @@
                 <label for="user_id">{{ $stepname ?? '' }}</label>
                 {{-- <select class="form-control select2 {{ $errors->has('user_id') ? 'is-invalid' : '' }}" name="userstep_ids" id="user_id"> --}}
                     @foreach($users as $user)
-                        <h6><span class="badge badge-secondary">{{$user->name}}</span></h6>
+                        <h6><span class="badge badge-secondary">{{$user->name ?? ''}}</span></h6>
                         {{-- <option value="{{ $user->id }}" {{ old('user_id') == $user->id ? 'selected' : '' }}>{{ $user->name }}</option> --}}
                     @endforeach
                 {{-- </select> --}}
@@ -33,7 +33,7 @@
             </div>
                  <div class="form-group">
                 <button class="btn btn-danger" type="submit">
-                    Send to {{ $stepname }}
+                    Send to {{ $stepname ?? ''}}
                 </button>
             </div>
         </form>

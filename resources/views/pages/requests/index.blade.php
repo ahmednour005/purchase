@@ -95,6 +95,8 @@
                                         {{$prrequest->approval_name}}
                                     @elseif($prrequest->approval->approval_name == 'PR Approved')
                                         {{$prrequest->approval_name}}
+                                    @elseif($prrequest->approval->approval_name == 'Revert')
+                                        {{$prrequest->approval_name}}     
                                     @elseif ($approvals->find($prrequest->approval_id)->stepapprovals->find($prrequest->stepapproval_id)->step_number ==1)
                                         Pending {{$approvals->find($prrequest->approval_id)->stepapprovals->find($prrequest->stepapproval_id)->step_name}} 
                                     @elseif($approvals->find($prrequest->approval_id)->stepapprovals->find($prrequest->stepapproval_id)->step_number !=1)
@@ -108,7 +110,17 @@
                                 @endif
                             </td>
                             <td class="requests-btn">
-                                @if($user->hasRole('super_admin1')|| in_array($prrequest->approval_id, [1]))
+                                @php
+                                    $approval_id_to_array = array(); 
+                                    if ($prrequest->approval_id == $approvals->where('approval_name','Pending')->first()->id) {
+                                        $approval_id = $approvals->where('approval_name','Pending')->first()->id;
+                                        $approval_id_to_array[] = $approval_id;
+                                    }else if ($prrequest->approval_id == $approvals->where('approval_name','Revert')->first()->id){
+                                        $approval_id = $approvals->where('approval_name','Revert')->first()->id;
+                                        $approval_id_to_array[] = $approval_id;
+                                    }
+                                @endphp
+                                @if($user->hasRole('super_admin') || $approvals->where('approval_name','Revert')->first()->approval_name == $prrequest->approval_name || in_array($prrequest->approval_id, $approval_id_to_array))
                                 <a class="btn btn-xs btn-success" href="{{ route('requests.showSend', $prrequest->id) }}">
                                     Send to
                                     @if ($prrequest->approval->approval_name == 'Pending')

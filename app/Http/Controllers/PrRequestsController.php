@@ -293,8 +293,11 @@ class PrRequestsController extends Controller
     public function showSend(PrRequest $prrequest)
     {
         // abort_if(!auth()->user()->is_admin, Response::HTTP_FORBIDDEN, '403 Forbidden');
+        $userid = auth()->user();
+        $pending_id = Approval::where('approval_name','Pending')->first()->id;
+        $approval_id = $prrequest->mainGroup->approval->id;
 
-        if ($prrequest->approval_id == 1) {
+        if ($prrequest->approval_id = $pending_id) {
             $stepname = $prrequest->mainGroup->approval->stepapprovals->pluck('step_name')->first();
             $step = $prrequest->mainGroup->approval->stepapprovals->first();
             $users = $step->users;
@@ -317,8 +320,6 @@ class PrRequestsController extends Controller
         //     abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
         }
 
-        
-
         return view('pages.requests.send', compact('prrequest', 'stepname', 'users','user_id','user_name','job_title'));
     }
 
@@ -327,8 +328,8 @@ class PrRequestsController extends Controller
         // dd($request);
         // $request = json_decode($requestcome);
         // abort_if(!auth()->user()->is_admin, Response::HTTP_FORBIDDEN, '403 Forbidden');
-        $userid = auth()->user();
-        // $status = Approval::where('approval_name','Pending')->first();
+        $user = auth()->user();
+        $pending_id = Approval::where('approval_name','Pending')->first()->id;
         $approval_id = $prrequest->mainGroup->approval->id;
 
         // $currentapproval = Approval::find($prrequest->approval_id); 
@@ -358,24 +359,19 @@ class PrRequestsController extends Controller
             // Previous ID
             $prev_id = $currentapproval->stepapprovals->where('id','<',$currentstep->id)->max('id');
             $prevstep = $currentapproval->stepapprovals->find($prev_id); 
-        }
+        } 
         // Last Step
-        // $laststep = $currentapproval->stepapprovals->max('id');
+        $laststep = $currentapproval->stepapprovals->max('id');
 
-        if ($prrequest->approval_id == 1) {
-            $stepname = $prrequest->mainGroup->approval->stepapprovals->pluck('step_name')->first();
-            $step_id = $prrequest->mainGroup->approval->stepapprovals->pluck('id')->first();
-            $step = $prrequest->mainGroup->approval->stepapprovals->first();
+        if ( $prrequest->approval_id = $pending_id) {
+            $approval = $prrequest->mainGroup->approval;
+            $step_id = $approval->stepapprovals->pluck('id')->first();
+            $step = $approval->stepapprovals->first();
+            // dd($step);
             $users = $step->users;
             $userstep_ids  = $users->pluck('id');
-            $column = 'userstep_ids';   
+            $column = 'userstep_ids';    
         }
-         else if (!in_array($prrequest->approval_id, [1]) && !$laststep) {
-            $column = 'userstep_ids';
-            $next_id = $currentapproval->stepapprovals->where('id','>',$currentstep->id)->min('id');
-            $nextstep = $currentapproval->stepapprovals->find($next_id);
-            $userstep_ids  = $nextstep->users->pluck('id');
-        } 
         // else {
         //     abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
         // }
@@ -385,17 +381,18 @@ class PrRequestsController extends Controller
         // ]);
 
         $prrequest->update([
-            $column => $userstep_ids,
             'approval_id' => $approval_id,
             'stepapproval_id' => $step_id,
-            'userstepapproved_id' => $userid->id,
+            'userstepapproved_id' => $user->id,
+            'userstep_ids' => $userstep_ids,
+            'steprevert_' => $userstep_ids,
         ]);
 
         // $prrequest->update([
             // $column => $userstep_ids,
         // ]);
 
-        Toastr::success('sucess','Purchase Request has been sent for'.$stepname);
+        Toastr::success('sucess','Purchase Request has been sent for');
 
         return redirect()->route('requests.index');
     }
@@ -458,7 +455,21 @@ class PrRequestsController extends Controller
                     $users = $step->users;
                     $userstep_ids  = $user->id;  
                 }   
-            }else{
+            }else if ($request->has('revert')) {
+                $status = Approval::where('approval_name','Revert')->first()->approval_name; 
+                $steprevert_id = $currentstep_id; 
+                $approval_id = $prrequest->mainGroup->approval->id;
+                $step_id = $prrequest->mainGroup->approval->stepapprovals->pluck('id')->first();
+                $step = $prrequest->mainGroup->approval->stepapprovals->first();
+                $users = $step->users;
+                $userstep_ids  = $users->pluck('id');
+
+                $prrequest->update([
+                    'steprevert_id' => $steprevert_id,
+                ]);
+        
+            }
+            else{
                 $status = Approval::where('approval_name','PR Rejected')->first()->approval_name; 
                 $approval_id = Approval::where('approval_name','PR Rejected')->first()->id;
                 $step_id = 1;

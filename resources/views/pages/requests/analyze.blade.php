@@ -17,14 +17,19 @@
                         </div>
                     @endif --}}
                 </div>
-                <div class="form-group">
-                    <button class="btn btn-success" name="approve" type="submit">
-                        Approve
-                    </button>
-                    <button class="btn btn-danger" name="reject" type="submit">
-                        Reject
-                    </button>
-                </div>
+                {{-- <div class="row"> --}}
+                    <div class="form-group">
+                        <button class="btn btn-success " name="approve" type="submit">
+                            Approve PR
+                        </button>
+                        <button class="btn btn-primary" name="revert" type="submit">
+                            Revert PR
+                        </button>
+                        <button class="btn btn-danger float-right" name="reject" type="submit">
+                            Reject PR
+                        </button>
+                    </div>
+                {{-- </div> --}}
             </form>
         </div>
     </div>

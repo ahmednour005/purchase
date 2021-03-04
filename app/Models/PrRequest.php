@@ -25,6 +25,7 @@ class PrRequest extends Model implements Auditable
         'stepapproval_id',
         'userstep_ids',
         'approval_name',
+        'steprevert_id',
     ];
 
     /**
@@ -46,6 +47,7 @@ class PrRequest extends Model implements Auditable
         'stepapproval_id',
         'userstep_ids',
         'approval_name',
+        'steprevert_id',
     ];
 
     protected $casts = [
