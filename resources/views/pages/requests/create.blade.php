@@ -65,6 +65,7 @@
 
                       <option value="">Choose...</option>
                       <option value="IT">IT</option>
+                      <option value="CV">Construction-Civil</option>
                       <option value="Legal Affairs">Legal Affairs</option>
                       <option value="HR">HR</option>
                     </select>

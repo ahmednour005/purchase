@@ -49,8 +49,18 @@
                         </th>
                     </tr>
                 </thead>
-                <tbody>
-                    @foreach($prrequests as $key => $prrequest)
+                <tbody>        
+                    @foreach($prrequests as  $prrequest)
+                    @php
+                      $userstep_ids = array();  
+                      if($prrequest->approval->approval_name != 'Pending')
+                        if($prrequest->approval->approval_name == 'PR Rejected')
+                            {$userstep_ids[] = $prrequest->created_by_id ;}
+                        else if($prrequest->approval->approval_name == 'PR Approved')
+                            {$userstep_ids[] = $prrequest->created_by_id ;}
+                        else {$userstep_ids = $prrequest->userstep_ids ;}  
+                    @endphp
+                    @if ( $user->hasRole('super_admin') || in_array($user->id, $userstep_ids) )
                         <tr class="justify-content-center" data-entry-id="{{ $prrequest->id }}">
                             <td>
                                 {{ $prrequest->date}}
@@ -78,32 +88,54 @@
                                 {{ $prrequest->request_number ?? '' }}
                             </td>
                             <td>
-                                {{ $user->is_user && $prrequest->approval_id < 8 ? $defaultStatus->approval_name : $prrequest->approval->approval_name }}
+                                @if ($prrequest->approval->approval_name == 'Pending')
+                                    {{$prrequest->approval->approval_name}} To Start Cycle 
+                                @elseif($prrequest->approval->approval_name != 'Pending')
+                                    @if($prrequest->approval->approval_name == 'PR Rejected')
+                                        {{$prrequest->approval_name}}
+                                    @elseif($prrequest->approval->approval_name == 'PR Approved')
+                                        {{$prrequest->approval_name}}
+                                    @elseif ($approvals->find($prrequest->approval_id)->stepapprovals->find($prrequest->stepapproval_id)->step_number ==1)
+                                        Pending {{$approvals->find($prrequest->approval_id)->stepapprovals->find($prrequest->stepapproval_id)->step_name}} 
+                                    @elseif($approvals->find($prrequest->approval_id)->stepapprovals->find($prrequest->stepapproval_id)->step_number !=1)
+                                        @php
+                                            $prev_id = $approvals->find($prrequest->approval_id)->stepapprovals->where('id','<',$prrequest->stepapproval_id)->max('id');
+                                        @endphp
+                                        {{$approvals->find($prrequest->approval_id)->stepapprovals->find($prev_id)->step_name}} {{$prrequest->approval_name}} 
+                                    
+                                    @endif 
+                                @endif
                             </td>
                             <td class="requests-btn">
-                                @if($user->is_admin || in_array($prrequest->approval_id, [1]))
+                                @if($user->hasRole('super_admin1')|| in_array($prrequest->approval_id, [1]))
                                 <a class="btn btn-xs btn-success" href="{{ route('requests.showSend', $prrequest->id) }}">
                                     Send to
-                                    @if($prrequest->approval_id == 1)
+                                    @if ($prrequest->approval->approval_name == 'Pending')
                                         {{$prrequest->mainGroup->approval->approval_name}}
-                                     {{-- @foreach($prrequest->mainGroup->approval->stepapprovals as $approv)
-                                        @foreach ($approv->users as $user)
-                                           {{$user->name}}
-                                        @endforeach
-                                     @endforeach --}}
                                     @else
-                                        CFO
+                                    @php
+                                        $nextid = $approvals->find($prrequest->approval_id)->stepapprovals->where('id','>',$prrequest->stepapproval_id)->min('id')
+                                    @endphp
+                                        {{$approvals->find($prrequest->approval_id)->stepapprovals->find($nextid)->step_name}}
                                     @endif
                                 </a>
-                                @elseif(( !$prrequest->approval_id == 1))
-                                    <a class="btn btn-xs btn-success" href="{{ route('admin.loan-applications.showAnalyze', $prrequest->id) }}">
+                                @php
+                                $userstep_ids = array();  
+                                if($prrequest->approval->approval_name != 'Pending')
+                                    if($prrequest->approval->approval_name == 'PR Rejected')
+                                        {$userstep_ids[] = $prrequest->created_by_id ;}
+                                    else if($prrequest->approval->approval_name == 'PR Approved')
+                                        {$userstep_ids[] = $prrequest->created_by_id ;}
+                                    else {$userstep_ids = $prrequest->userstep_ids ;}  
+                                @endphp
+                                @elseif($user->hasRole('super_admin') || in_array($user->id, $userstep_ids))
+                                    <a class="btn btn-xs btn-success" href="{{ route('requests.showAnalyze', $prrequest->id) }}">                                        
                                         Submit analysis
                                     </a>
                                 @endif
-                                <a class="btn btn-sm btn-info" href="{{ route('actions.show', $prrequest->id) }}">
+                                <a class="btn btn-sm btn-info" href="{{ route('requests.show', $prrequest->id) }}">
                                     view
                                 </a>
-
                                 <form action="{{ route('requests.destroy', $prrequest->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
                                     <input type="hidden" name="_method" value="DELETE">
                                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -111,7 +143,9 @@
                                 </form>
                             </td>
                         </tr>
+                        @endif
                     @endforeach
+                    
                 </tbody>
             </table>
 

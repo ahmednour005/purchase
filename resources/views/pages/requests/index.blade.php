@@ -51,6 +51,16 @@
                 </thead>
                 <tbody>
                     @foreach($prrequests as $key => $prrequest)
+                    @php
+                      $userstep_ids = array();  
+                      if($prrequest->approval->approval_name != 'Pending')
+                        if($prrequest->approval->approval_name == 'PR Rejected')
+                            {$userstep_ids[] = $prrequest->created_by_id ;}
+                        else if($prrequest->approval->approval_name == 'PR Approved')
+                            {$userstep_ids[] = $prrequest->created_by_id ;}
+                        else {$userstep_ids = $prrequest->userstep_ids ;}  
+                    @endphp
+                    @if ( $user->hasRole('super_admin') || in_array($user->id, $userstep_ids) || $user->id == $prrequest->created_by_id)
                         <tr class="justify-content-center" data-entry-id="{{ $prrequest->id }}">
                             <td>
                                 {{ $prrequest->date}}
@@ -110,17 +120,27 @@
                                         {{$approvals->find($prrequest->approval_id)->stepapprovals->find($nextid)->step_name}}
                                     @endif
                                 </a>
-                               
-                                @elseif($user->hasRole('super_admin') || in_array($user->id, $prrequest->userstep_ids) && $prrequest->approval->approval_name != 'Pending' )
+                                <a class="btn btn-sm btn-warning" href="{{ route('requests.edit', $prrequest->id) }}">
+                                    edit
+                                </a>
+                                
+                                {{-- @php
+                                $userstep_ids = array();  
+                                if($prrequest->approval->approval_name != 'Pending')
+                                    if($prrequest->approval->approval_name == 'PR Rejected')
+                                        {$userstep_ids[] = $prrequest->created_by_id ;}
+                                    else if($prrequest->approval->approval_name == 'PR Approved')
+                                        {$userstep_ids[] = $prrequest->created_by_id ;}
+                                        
+                                        else {$userstep_ids = $prrequest->userstep_ids ;} 
+                                @endphp          --}}
+                                @elseif($user->hasRole('super_admin') || in_array($user->id, $prrequest->userstep_ids))
                                     <a class="btn btn-xs btn-success" href="{{ route('requests.showAnalyze', $prrequest->id) }}">                                        
                                         Submit analysis
                                     </a>
                                 @endif
                                 <a class="btn btn-sm btn-info" href="{{ route('requests.show', $prrequest->id) }}">
                                     view
-                                </a>
-                                <a class="btn btn-sm btn-warning" href="{{ route('requests.edit', $prrequest->id) }}">
-                                    edit
                                 </a>
                                 <form action="{{ route('requests.destroy', $prrequest->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
                                     <input type="hidden" name="_method" value="DELETE">
@@ -129,6 +149,7 @@
                                 </form>
                             </td>
                         </tr>
+                        @endif
                     @endforeach
                 </tbody>
             </table>

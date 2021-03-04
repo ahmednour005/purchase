@@ -403,10 +403,10 @@ class PrRequestsController extends Controller
     public function showAnalyze(PrRequest $prrequest)
     {
         $user = auth()->user();
-        $approval_id = $prrequest->mainGroup->approval->id;
-        $currentapproval = Approval::find($prrequest->approval_id); 
-        $currentstep = $currentapproval->stepapprovals->find($currentapproval);
-        $users = $currentstep->users;
+        // $approval_id = $prrequest->mainGroup->approval->id;
+        // $currentapproval = Approval::find($prrequest->approval_id); 
+        // $currentstep = $currentapproval->stepapprovals->find($currentapproval);
+        // $users = $currentstep->users;
         // abort_if(
         //     (!$user->is_analyst || $loanApplication->status_id != 2) && (!$user->is_cfo || $loanApplication->status_id != 5),
         //     Response::HTTP_FORBIDDEN,
