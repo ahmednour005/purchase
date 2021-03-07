@@ -52,13 +52,13 @@
                 <tbody>
                     @foreach($prrequests as $key => $prrequest)
                     @php
-                      $userstep_ids = array();  
+                      $userstep_ids = array();
                       if($prrequest->approval->approval_name != 'Pending')
                         if($prrequest->approval->approval_name == 'PR Rejected')
                             {$userstep_ids[] = $prrequest->created_by_id ;}
                         else if($prrequest->approval->approval_name == 'PR Approved')
                             {$userstep_ids[] = $prrequest->created_by_id ;}
-                        else {$userstep_ids = $prrequest->userstep_ids ;}  
+                        else {$userstep_ids = $prrequest->userstep_ids ;}
                     @endphp
                     @if ( $user->hasRole('super_admin') || in_array($user->id, $userstep_ids) || $user->id == $prrequest->created_by_id)
                         <tr class="justify-content-center" data-entry-id="{{ $prrequest->id }}">
@@ -87,31 +87,31 @@
                             <td>
                                 {{ $prrequest->request_number ?? '' }}
                             </td>
-                            <td> 
+                            <td>
                                 @if ($prrequest->approval->approval_name == 'Pending')
-                                    {{$prrequest->approval->approval_name}} To Start Cycle 
+                                    {{$prrequest->approval->approval_name}} To Start Cycle
                                 @elseif($prrequest->approval->approval_name != 'Pending')
                                     @if($prrequest->approval->approval_name == 'PR Rejected')
                                         {{$prrequest->approval_name}}
                                     @elseif($prrequest->approval->approval_name == 'PR Approved')
                                         {{$prrequest->approval_name}}
                                     @elseif($prrequest->approval->approval_name == 'Revert')
-                                        {{$prrequest->approval_name}}     
+                                        {{$prrequest->approval_name}}
                                     @elseif ($approvals->find($prrequest->approval_id)->stepapprovals->find($prrequest->stepapproval_id)->step_number ==1)
-                                        Pending {{$approvals->find($prrequest->approval_id)->stepapprovals->find($prrequest->stepapproval_id)->step_name}} 
+                                        Pending {{$approvals->find($prrequest->approval_id)->stepapprovals->find($prrequest->stepapproval_id)->step_name}}
                                     @elseif($approvals->find($prrequest->approval_id)->stepapprovals->find($prrequest->stepapproval_id)->step_number !=1)
                                         @php
                                             $prev_id = $approvals->find($prrequest->approval_id)->stepapprovals->where('id','<',$prrequest->stepapproval_id)->max('id');
                                         @endphp
-                                        {{$approvals->find($prrequest->approval_id)->stepapprovals->find($prev_id)->step_name}} {{$prrequest->approval_name}} 
-                                    
-                                    @endif 
-                                
+                                        {{$approvals->find($prrequest->approval_id)->stepapprovals->find($prev_id)->step_name}} {{$prrequest->approval_name}}
+
+                                    @endif
+
                                 @endif
                             </td>
                             <td class="requests-btn">
                                 @php
-                                    $approval_id_to_array = array(); 
+                                    $approval_id_to_array = array();
                                     if ($prrequest->approval_id == $approvals->where('approval_name','Pending')->first()->id) {
                                         $approval_id = $approvals->where('approval_name','Pending')->first()->id;
                                         $approval_id_to_array[] = $approval_id;
@@ -135,19 +135,19 @@
                                 <a class="btn btn-sm btn-warning" href="{{ route('requests.edit', $prrequest->id) }}">
                                     edit
                                 </a>
-                                
+
                                 {{-- @php
-                                $userstep_ids = array();  
+                                $userstep_ids = array();
                                 if($prrequest->approval->approval_name != 'Pending')
                                     if($prrequest->approval->approval_name == 'PR Rejected')
                                         {$userstep_ids[] = $prrequest->created_by_id ;}
                                     else if($prrequest->approval->approval_name == 'PR Approved')
                                         {$userstep_ids[] = $prrequest->created_by_id ;}
-                                        
-                                        else {$userstep_ids = $prrequest->userstep_ids ;} 
+
+                                        else {$userstep_ids = $prrequest->userstep_ids ;}
                                 @endphp          --}}
                                 @elseif($user->hasRole('super_admin') || in_array($user->id, $prrequest->userstep_ids))
-                                    <a class="btn btn-xs btn-success" href="{{ route('requests.showAnalyze', $prrequest->id) }}">                                        
+                                    <a class="btn btn-xs btn-success" href="{{ route('requests.showAnalyze', $prrequest->id) }}">
                                         Submit analysis
                                     </a>
                                 @endif
