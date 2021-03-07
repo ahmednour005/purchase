@@ -120,10 +120,10 @@
                                         $approval_id_to_array[] = $approval_id;
                                     }
                                 @endphp
-                                @if($user->hasRole('super_admin') || $approvals->where('approval_name','Revert')->first()->approval_name == $prrequest->approval_name || in_array($prrequest->approval_id, $approval_id_to_array))
+                                @if( in_array($prrequest->approval_id, $approval_id_to_array) || $approvals->where('approval_name','Revert')->first()->approval_name == $prrequest->approval_name)
                                 <a class="btn btn-xs btn-success" href="{{ route('requests.showSend', $prrequest->id) }}">
                                     Send to
-                                    @if ($prrequest->approval->approval_name == 'Pending')
+                                    @if ($user->hasRole('super_admin') || $prrequest->approval->approval_name == 'Pending')
                                         {{$prrequest->mainGroup->approval->approval_name}}
                                     @else
                                     @php

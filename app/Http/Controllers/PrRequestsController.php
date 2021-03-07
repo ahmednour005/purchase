@@ -361,7 +361,7 @@ class PrRequestsController extends Controller
             $prevstep = $currentapproval->stepapprovals->find($prev_id); 
         } 
         // Last Step
-        $laststep = $currentapproval->stepapprovals->max('id');
+        // $laststep = $currentapproval->stepapprovals->max('id');
 
         if ( $prrequest->approval_id = $pending_id) {
             $approval = $prrequest->mainGroup->approval;
