@@ -206,19 +206,29 @@
                     </div>
                     {{--  </div>  --}}
                     <div class="form-group ml-4">
+                        @php
+                            $approval_id_to_array = array(); 
+                            if ($prrequest->approval_id == $approvals->where('approval_name','Pending')->first()->id) {
+                                $approval_id = $approvals->where('approval_name','Pending')->first()->id;
+                                $approval_id_to_array[] = $approval_id;
+                            }else if ($prrequest->approval_id == $approvals->where('approval_name','Revert')->first()->id){
+                                $approval_id = $approvals->where('approval_name','Revert')->first()->id;
+                                $approval_id_to_array[] = $approval_id;
+                            }
+                        @endphp
+                        @if( in_array($prrequest->approval_id, $approval_id_to_array) || $approvals->where('approval_name','Revert')->first()->approval_name == $prrequest->approval_name)
+                        <a class="btn btn-xs btn-success" href="{{ route('requests.showSend', $prrequest->id) }}">
+                            Send to
+                            @if ($user->hasRole('super_admin') || $prrequest->approval->approval_name == 'Pending')
+                                {{$prrequest->mainGroup->approval->approval_name}}
+                            @else
+                            @php
+                                $nextid = $approvals->find($prrequest->approval_id)->stepapprovals->where('id','>',$prrequest->stepapproval_id)->min('id')
+                            @endphp
+                                {{$approvals->find($prrequest->approval_id)->stepapprovals->find($nextid)->step_name}}
+                            @endif
+                        </a>
 
-                        @if($user->hasRole('super_admin1')|| in_array($prrequest->approval_id, [1]))
-                            <a class="btn btn-xs btn-success" href="{{ route('requests.showSend', $prrequest->id) }}">
-                                Send to
-                                @if ($prrequest->approval->approval_name == 'Pending')
-                                    {{$prrequest->mainGroup->approval->approval_name}}
-                                @else
-                                @php
-                                    $nextid = $approvals->find($prrequest->approval_id)->stepapprovals->where('id','>',$prrequest->stepapproval_id)->min('id')
-                                @endphp
-                                    {{$approvals->find($prrequest->approval_id)->stepapprovals->find($nextid)->step_name ?? ''}}
-                                @endif
-                            </a>  
                         @elseif($user->hasRole('super_admin') || in_array($user->id, $prrequest->userstep_ids) && $prrequest->approval->approval_name != 'Pending' )
                             @if($approvals->find($prrequest->approval_id)->approval_name == 'PR Rejected')
                                 {{$approvals->find($prrequest->approval_id)->approval_name}}

@@ -132,20 +132,12 @@
                                         {{$approvals->find($prrequest->approval_id)->stepapprovals->find($nextid)->step_name}}
                                     @endif
                                 </a>
+
+                                {{-- @elseif($user->hasRole('super_admin'))   --}}
                                 <a class="btn btn-sm btn-warning" href="{{ route('requests.edit', $prrequest->id) }}">
                                     edit
                                 </a>
                                 
-                                {{-- @php
-                                $userstep_ids = array();  
-                                if($prrequest->approval->approval_name != 'Pending')
-                                    if($prrequest->approval->approval_name == 'PR Rejected')
-                                        {$userstep_ids[] = $prrequest->created_by_id ;}
-                                    else if($prrequest->approval->approval_name == 'PR Approved')
-                                        {$userstep_ids[] = $prrequest->created_by_id ;}
-                                        
-                                        else {$userstep_ids = $prrequest->userstep_ids ;} 
-                                @endphp          --}}
                                 @elseif($user->hasRole('super_admin') || in_array($user->id, $prrequest->userstep_ids))
                                     <a class="btn btn-xs btn-success" href="{{ route('requests.showAnalyze', $prrequest->id) }}">                                        
                                         Submit analysis
