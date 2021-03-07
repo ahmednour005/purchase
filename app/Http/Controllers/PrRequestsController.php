@@ -433,7 +433,7 @@ class PrRequestsController extends Controller
         // Last Step
         $laststep_id = $currentapproval->stepapprovals->max('id');
 
-        if (in_array($user->id, $prrequest->userstep_ids)  && $prrequest->approval_id != 1 ||  $user->hasRole('super_admin')) {
+        if (in_array($user->id, $prrequest->userstep_ids)  && $prrequest->approval_name != "Pending" ||  $user->hasRole('super_admin')) {
             if ( $request->has('approve')){
                 if($currentstep_id == $laststep_id){
                     $status = Approval::where('approval_name','PR Approved')->first()->approval_name;
