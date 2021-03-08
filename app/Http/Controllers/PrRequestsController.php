@@ -8,6 +8,7 @@ use App\Models\RequestItem;
 use App\Models\Product;
 use App\Models\Service;
 use App\Models\Approval;
+use App\Models\Department;
 use App\Models\StepApproval;
 use Brian2694\Toastr\Facades\Toastr;
 use Carbon\Carbon;
@@ -81,9 +82,9 @@ class PrRequestsController extends Controller
         $getuser = Auth::user();
         $users = User::all();
         $users_count=  $users->count();
+        $departments = Department::all();
 
-
-        return view('pages.requests.create',compact('groups','products','mytime', 'getuser','users_count',
+        return view('pages.requests.create',compact('groups','departments','products','mytime', 'getuser','users_count',
     'subGroups','products'));
     }
 
@@ -364,13 +365,13 @@ class PrRequestsController extends Controller
         // $laststep = $currentapproval->stepapprovals->max('id');
 
         if ( $prrequest->approval_id = $pending_id) {
+            $status = Approval::where('approval_name','Pending')->first()->approval_name;
             $approval = $prrequest->mainGroup->approval;
             $step_id = $approval->stepapprovals->pluck('id')->first();
             $step = $approval->stepapprovals->first();
             // dd($step);
             $users = $step->users;
             $userstep_ids  = $users->pluck('id');
-            $column = 'userstep_ids';
         }
         // else {
         //     abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
@@ -381,6 +382,7 @@ class PrRequestsController extends Controller
         // ]);
 
         $prrequest->update([
+            'approval_name' => $status,
             'approval_id' => $approval_id,
             'stepapproval_id' => $step_id,
             'userstepapproved_id' => $user->id,
@@ -433,7 +435,7 @@ class PrRequestsController extends Controller
         // Last Step
         $laststep_id = $currentapproval->stepapprovals->max('id');
 
-        if (in_array($user->id, $prrequest->userstep_ids)  && $prrequest->approval_name != "Pending" ||  $user->hasRole('super_admin')) {
+        if (in_array($user->id, $prrequest->userstep_ids)  && $prrequest->approval_id != 1 ||  $user->hasRole('super_admin')) {
             if ( $request->has('approve')){
                 if($currentstep_id == $laststep_id){
                     $status = Approval::where('approval_name','PR Approved')->first()->approval_name;

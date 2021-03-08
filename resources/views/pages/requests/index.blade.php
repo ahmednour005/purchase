@@ -63,24 +63,24 @@
                     @if ( $user->hasRole('super_admin') || in_array($user->id, $userstep_ids) || $user->id == $prrequest->created_by_id)
                         <tr class="justify-content-center" data-entry-id="{{ $prrequest->id }}">
                             <td>
-                                {{ $prrequest->date}}
+                                {{ $prrequest->date ?? ''}}
                             </td>
                             <td>
                                 @foreach($prrequest->requestitems as $key => $item)
-                                    {{$item->piroirty}}
+                                    {{$item->piroirty ?? ''}}
                                     <br>
                                 @endforeach
                             </td>
                             <td>
 
                                 @foreach($prrequest->requestitems as $key => $item)
-                                    {{$item->product->prod_name}}<br>
+                                    {{$item->product->prod_name ?? ''}}<br>
                                 @endforeach
                             </td>
                             <td>
                                 <ul>
                                 @foreach($prrequest->requestitems as $key => $item)
-                                    {{ $item->service->service_name }}<br>
+                                    {{ $item->service->service_name ?? '' }}<br>
                                 @endforeach
                                 </ul>
                             </td>
@@ -95,8 +95,8 @@
                                         {{$prrequest->approval_name}}
                                     @elseif($prrequest->approval->approval_name == 'PR Approved')
                                         {{$prrequest->approval_name}}
-                                    @elseif($prrequest->approval->approval_name == 'Revert')
-                                        {{$prrequest->approval_name}}
+                                    @elseif($prrequest->approval_name == 'Revert')
+                                        {{$prrequest->approval_name}} By {{ $approvals->find($prrequest->approval_id)->stepapprovals->find($prrequest->steprevert_id)->step_name }}
                                     @elseif ($approvals->find($prrequest->approval_id)->stepapprovals->find($prrequest->stepapproval_id)->step_number ==1)
                                         Pending {{$approvals->find($prrequest->approval_id)->stepapprovals->find($prrequest->stepapproval_id)->step_name}}
                                     @elseif($approvals->find($prrequest->approval_id)->stepapprovals->find($prrequest->stepapproval_id)->step_number !=1)
@@ -124,7 +124,7 @@
                                 <a class="btn btn-xs btn-success" href="{{ route('requests.showSend', $prrequest->id) }}">
                                     Send to
                                     @if ($user->hasRole('super_admin') || $prrequest->approval->approval_name == 'Pending')
-                                        {{$prrequest->mainGroup->approval->approval_name}}
+                                        {{$prrequest->mainGroup->approval->stepapprovals->first()->step_name}}
                                     @else
                                     @php
                                         $nextid = $approvals->find($prrequest->approval_id)->stepapprovals->where('id','>',$prrequest->stepapproval_id)->min('id')
