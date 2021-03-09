@@ -30,7 +30,7 @@ class WorkGroupController extends Controller
      */
     public function create()
     {
-        //
+        
     }
 
     /**

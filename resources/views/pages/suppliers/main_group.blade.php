@@ -134,7 +134,7 @@
                 <table id="example1" class="table table-bordered table-striped">
                   <thead>
                   <tr style="text-align:center;">
-                    <th  > @lang('site.id')</th>  
+                    <th  > @lang('site.id')</th>
                     <th  > @lang('site.mainGroup')</th>
                     <th  > @lang('site.approvalCycle')</th>
                     @if(auth()->user()->hasPermission("mainGroup_update") ||
