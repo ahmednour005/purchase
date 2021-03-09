@@ -11,6 +11,7 @@ class RequestItem extends Model
         'product_id',
         'item',
         'specification',
+        'comment',
         'qtreqtopur',
         'qtonstore',
         'acqtreqtopur',

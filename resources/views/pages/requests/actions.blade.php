@@ -44,7 +44,6 @@
                             Status
                         </th>
                         <th width="150px">
-
                             Actions
                         </th>
                     </tr>
@@ -89,35 +88,44 @@
                             </td>
                             <td>
                                 @if ($prrequest->approval->approval_name == 'Pending')
-                                    {{$prrequest->approval->approval_name}} To Start Cycle 
+                                    {{$prrequest->approval->approval_name}} To Start Cycle
                                 @elseif($prrequest->approval->approval_name != 'Pending')
                                     @if($prrequest->approval->approval_name == 'PR Rejected')
                                         {{$prrequest->approval_name}}
                                     @elseif($prrequest->approval->approval_name == 'PR Approved')
                                         {{$prrequest->approval_name}}
+                                    @elseif($prrequest->approval_name == 'Revert')
+                                        {{$prrequest->approval_name}} By {{ $approvals->find($prrequest->approval_id)->stepapprovals->find($prrequest->steprevert_id)->step_name }}
                                     @elseif ($approvals->find($prrequest->approval_id)->stepapprovals->find($prrequest->stepapproval_id)->step_number ==1)
-                                        Pending {{$approvals->find($prrequest->approval_id)->stepapprovals->find($prrequest->stepapproval_id)->step_name}} 
+                                        Pending {{$approvals->find($prrequest->approval_id)->stepapprovals->find($prrequest->stepapproval_id)->step_name}}
                                     @elseif($approvals->find($prrequest->approval_id)->stepapprovals->find($prrequest->stepapproval_id)->step_number !=1)
                                         @php
                                             $prev_id = $approvals->find($prrequest->approval_id)->stepapprovals->where('id','<',$prrequest->stepapproval_id)->max('id');
                                         @endphp
-                                        {{$approvals->find($prrequest->approval_id)->stepapprovals->find($prev_id)->step_name}} {{$prrequest->approval_name}} 
-                                    
-                                    @endif 
+                                        {{$approvals->find($prrequest->approval_id)->stepapprovals->find($prev_id)->step_name}} {{$prrequest->approval_name}}
+
+                                    @endif
                                 @endif
                             </td>
                             <td class="requests-btn">
                                 @if($user->hasRole('super_admin1')|| in_array($prrequest->approval_id, [1]))
-                                <a class="btn btn-xs btn-success" href="{{ route('requests.showSend', $prrequest->id) }}">
-                                    Send to
-                                    @if ($prrequest->approval->approval_name == 'Pending')
-                                        {{$prrequest->mainGroup->approval->approval_name}}
-                                    @else
-                                    @php
-                                        $nextid = $approvals->find($prrequest->approval_id)->stepapprovals->where('id','>',$prrequest->stepapproval_id)->min('id')
-                                    @endphp
-                                        {{$approvals->find($prrequest->approval_id)->stepapprovals->find($nextid)->step_name}}
-                                    @endif
+                                <form method="POST" action="{{ route("requests.send", $prrequest) }}" enctype="multipart/form-data">
+                                    @csrf
+                                    <button type="submit" class="btn btn-xs btn-success m-1" data-toggle="tooltip" data-placement="top" title="Send">
+                                        @if ($user->hasRole('super_admin') || in_array($prrequest->approval_id, $approval_id_to_array) || $prrequest->approval->approval_name == 'Pending')
+                                        <i class="fas fa-paper-plane" ></i>
+                                        {{-- {{$prrequest->mainGroup->approval->stepapprovals->first()->step_name}} --}}
+                                        @else
+                                        @php
+                                            $nextid = $approvals->find($prrequest->approval_id)->stepapprovals->where('id','>',$prrequest->stepapproval_id)->min('id')
+                                        @endphp
+                                            {{$approvals->find($prrequest->approval_id)->stepapprovals->find($nextid)->step_name}}
+                                        @endif
+                                    </button>
+                                    @method('GET')
+                                </form>
+                                <a class="btn btn-sm btn-warning m-1" href="{{ route('requests.edit', $prrequest->id) }}" data-toggle="tooltip" data-placement="top" title="Edit">
+                                    <i class="fas fa-edit"></i>
                                 </a>
                                 @php
                                 $userstep_ids = array();  
@@ -128,13 +136,14 @@
                                         {$userstep_ids[] = $prrequest->created_by_id ;}
                                     else {$userstep_ids = $prrequest->userstep_ids ;}  
                                 @endphp
-                                @elseif($user->hasRole('super_admin') || in_array($user->id, $userstep_ids))
+                                {{-- @elseif($user->hasRole('super_admin') || in_array($user->id, $userstep_ids))
                                     <a class="btn btn-xs btn-success" href="{{ route('requests.showAnalyze', $prrequest->id) }}">                                        
                                         Submit analysis
-                                    </a>
+                                    </a> --}}
+                                    
                                 @endif
-                                <a class="btn btn-sm btn-info" href="{{ route('requests.show', $prrequest->id) }}">
-                                    view
+                                <a class="btn btn-sm btn-info m-1" href="{{ route('requests.show', $prrequest->id) }}" data-toggle="tooltip" data-placement="top" title="View">
+                                    <i class="fas fa-eye"></i>
                                 </a>
                                 <form action="{{ route('requests.destroy', $prrequest->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
                                     <input type="hidden" name="_method" value="DELETE">
@@ -148,114 +157,7 @@
                     
                 </tbody>
             </table>
-
-            {{--  <table id="example1" class="table table-bordered table-striped">
-
-                <thead>
-                <tr style="text-align:center;">
-                  <th >@lang('site.actions')</th>
-                  <th  > @lang('site.id')</th>
-                  <th >@lang('site.company')</th>
-                   <th >  @lang('site.responsible_person')</th>
-                  <th > @lang('site.services')</th>
-                  <th > @lang('site.products')</th>
-                  <th >@lang('site.mobile') </th>
-                  <th > @lang('site.phone')</th>
-                  <th > @lang('site.whatsapp')</th>
-                  <th class="hiddenCols"> @lang('site.fax')</th>
-                  <th class="hiddenCols"> @lang('site.email')</th>
-                  <th class="hiddenCols" > @lang('site.date')</th>
-                  <th class="hiddenCols" > @lang('site.approval')</th>
-                  <th class="hiddenCols" > @lang('site.address')</th>
-                </tr>
-                </thead>
-                <tbody>
-
-                @foreach($suppliers as $supplier)
-                    <tr>
-                        <td class="options">
-
-
-                            <div class="option-items">
-                                <div class="icon">
-                                  <i class="fas fa-cog"></i>
-                                </div>
-
-
-                            <a href="{{route('profile', ['id' => $supplier->id])}}" class="btn btn-success"><i class="fa fa-eye"></i></a>
-                            @if(!$archive)
-                            @if(auth()->user()->hasPermission('supplier_update'))
-                                <a href="{{route('supplier.edit',$supplier->id)}}"  class="btn btn-warning"> <i class="fa fa-edit "></i> </a>
-                                @endif
-                                @endif
-                            @if($archive)
-                               @if(auth()->user()->hasPermission('supplier_restore'))
-                                <a  class="btn btn-danger" data-sup_id="{{$supplier->id}}" data-toggle="modal" data-target="#restore"> <i class="fa fa-trash-restore-alt "></i> </a>
-                              @endif
-                                @else
-                                @if(auth()->user()->hasPermission('supplier_delete'))
-                                <a  class="btn btn-danger" data-sup_id="{{$supplier->id}}" data-toggle="modal" data-target="#delete"> <i class="fa fa-trash-alt "></i> </a>
-                              @endif
-                                @endif
-                             </div>
-                        </td>
-                        <td> {{$supplier->id}} </td>
-                        <td> {{$supplier->company}} </td>
-                        <td>
-                            {{ $supplier->persons[0]->responsible_person }}
-                        </td>
-                        <td>
-
-                            @foreach($supplier->services as $ser)
-                                <span class="type_service">{{ $ser->service_name }} </span>
-                            @endforeach
-
-
-                        </td>
-                        <td>
-                            @foreach($supplier->products as $prod)
-                                <span class="type_service">{{ $prod->prod_name }} </span>
-                             @endforeach
-                        </td>
-                        <td>
-
-                            {{ $supplier->persons[0]->mobile }}
-                        </td>
-                        @if($supplier->phone)
-                            <td> {{$supplier->phone}} </td>
-                        @else
-                            <td> -- </td>
-                        @endif
-
-                        <td>
-                            {{ $supplier->persons[0]->whatsapp }}
-                        </td>
-                        @if($supplier->fax)
-                            <td> {{$supplier->fax}} </td>
-                            @else
-                            <td> -- </td>
-                        @endif
-                        <td> {{$supplier->supplier_email}} </td>
-                        <td> {{ \Carbon\Carbon::parse($supplier->created_at)->format('d/m/Y')}} </td>
-                        <td> @lang($supplier->accredite) </td>
-
-                        <td> {{$supplier->address}} </td>
-
-
-                    </tr>
-                @endforeach
-
-
-
-                  </tbody>
-              </table>
-  --}}
-
-
-
             </div>
-
-
     </div>
 </div>
 @endsection

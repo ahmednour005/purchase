@@ -103,7 +103,6 @@
                         @foreach ($groups as $group)
                           <option value="{{ $group->id }}">{{ $group->group_name }}</option>
                         @endforeach
-
                       </select>
 
                 </div>
@@ -124,17 +123,17 @@
                                 <div class="row">
                                     <div class="col-md-11">
                                         <div class="form-row m-1">
-                                            <div class="col-md-4">
-                                                <select name="service_id[]" class="form-control SelectProduct getSubGroup"  value="{{ old('department') }}" required>
-                                                    <option value="">Choose...</option>
+                                            <div class="col-md-3">
+                                                <select name="service_id[]" class="form-control SelectProduct getSubGroup"  value="{{ old('department') }}" data-toggle="tooltip" data-placement="top" title="Sub Group" required>
+                                                    <option value="" title="Sub Group">Choose...</option>
                                                     @foreach ($subGroups as $subGroup)
-                                                      <option value="{{ $subGroup->id }}">{{ $subGroup->service_name }}</option>
+                                                      <option value="{{ $subGroup->id }}" title="Sub Group">{{ $subGroup->service_name }}</option>
                                                     @endforeach
                                                 </select>
                                                 <div class="invalid-feedback">Please fill out this field.</div>
                                             </div>
-                                            <div class="col-md-4">
-                                                <select name="product_id[]" class="form-control SelectItem Getitems" value="{{ old('item') }}" required>
+                                            <div class="col-md-3">
+                                                <select name="product_id[]" class="form-control SelectItem Getitems" value="{{ old('item') }}" data-toggle="tooltip" data-placement="top" title="Item" required>
                                                     <option value="">Choose...</option>
                                                     @foreach ($products as $product)
                                                        <option value="{{ $product->id }}">{{ $product->prod_name }}</option>
@@ -143,38 +142,28 @@
                                                 </select>
                                                 <div class="invalid-feedback">Please fill out this field.</div>
                                             </div>
-                                            <div><input type="hidden" name="items[]" value="hidden"></div>
-                                            <div class="col-md-4">
-                                                <input type="number" name="qtreqtopurs[]" placeholder="Qt required to purchase..." class="form-control qrtp" id="qrtp" value="{{ old('qtreqtopurs.' . $index) ?? '' }}"/>
+                                            <div><input type="hidden" name="items[]" value="any"></div>
+                                            <div class="col-md-2">
+                                                <input type="number" name="qtreqtopurs[]" placeholder="Qt required to purchase..." class="form-control qrtp" id="qrtp" value="{{ old('qtreqtopurs.' . $index) ?? '' }}" data-toggle="tooltip" data-placement="top" title="Qt required to purchase"/>
                                                 <div class="invalid-feedback">Please fill out this field.</div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <input type="number" name="qtonstores[]" placeholder="Qt On Store..." class="form-control qos" value="{{ old('qtonstores.' . $index) ?? '' }}" data-toggle="tooltip" data-placement="top" title="Qt On Store"/>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <input type="number" name="acqtreqtopurs[]" placeholder="Actually Qt required to purchase..." class="form-control aqrtp" value="{{ old('acqtreqtopurs.' . $index) ?? '' }}" data-toggle="tooltip" data-placement="top" title="Actually Qt required to purchase"/>
                                             </div>
                                         </div>
                                         <div class="form-row mx-0" >
                                             <div class="col-md-4 no-gutters">
                                                 <div class="col-md-12">
-                                                    <textarea type="text" name="specifications[]" placeholder="Specifications/Comments..." class="form-control" id="specification" value="{{ old('specifications.' . $index) ?? '' }}" rows="3" cols="10"></textarea>
+                                                    <textarea type="text" name="specifications[]" placeholder="Specifications..." class="form-control" id="specification" value="{{ old('specifications.' . $index) ?? '' }}" rows="3" cols="10" data-toggle="tooltip" data-placement="top" title="Specification..."></textarea>
                                                     <div class="invalid-feedback">Please fill out this field.</div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-8 no-gutters">
-                                                <div class="form-row mb-1 no-gutters">
-                                                    <div class="col-md-6">
-                                                        <input type="number" name="qtonstores[]" placeholder="Qt On Store..." class="form-control qos" value="{{ old('qtonstores.' . $index) ?? '' }}"/>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <input type="number" name="acqtreqtopurs[]" placeholder="Actually Qt required to purchase..." class="form-control aqrtp" value="{{ old('acqtreqtopurs.' . $index) ?? '' }}" readonly/>
-                                                    </div>
-                                                </div>
-                                                <div class="form-row">
-                                                    <div class="col-md-6">
-                                                        <select name="piroirtys[]" class="form-control piroirty" id="piroirty" placeholder="Chosse Currncy">
-                                                            <option>Pirority...</option>
-                                                            <option value="low">Low (more than 1 week)</option>
-                                                            <option value="medium">Medium (within 7 days)</option>
-                                                            <option value="high">High (within 3 days)</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-md-6">
+                                            <div class="col-md-4">
+                                                <div class="form-row mb-2 no-gutters">
+                                                    <div class="col-md-12">
                                                         <select name="units[]" class="form-control unit" id="unit">
                                                             <option value="">Units...</option>
                                                             <option value="Pcs">Pcs</option>
@@ -189,8 +178,24 @@
                                                             <option value="1000">1000</option>
                                                             <option value="Ton">Ton</option>
                                                             <option value="شكارة">شكارة</option>
-                                                        </select>
+                                                        </select>                                                    
                                                     </div>
+                                                </div>
+                                                <div class="form-row">
+                                                    <div class="col-md-12">
+                                                        <select name="piroirtys[]" class="form-control piroirty" id="piroirty" placeholder="Chosse Currncy">
+                                                            <option>Pirority...</option>
+                                                            <option value="low">Low (more than 1 week)</option>
+                                                            <option value="medium">Medium (within 7 days)</option>
+                                                            <option value="high">High (within 3 days)</option>
+                                                        </select>
+                                                    </div> 
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 no-gutters">
+                                                <div class="col-md-12">
+                                                    <textarea type="text" name="comments[]" placeholder="Comments..." class="form-control" id="specification" value="{{ old('specifications.' . $index) ?? '' }}" rows="3" cols="10" data-toggle="tooltip" data-placement="top" title="Comment..."></textarea>
+                                                    <div class="invalid-feedback">Please fill out this field.</div>
                                                 </div>
                                             </div>
 
@@ -198,13 +203,13 @@
                                 </div>
                                 <div class="col-md-1">
                                     <div class="row-form mt-2 mb-1">
-                                        <button type="button" id='edit_row' class=" rounded-pill btn btn-warning btn-sm">Edit</button>
+                                        <button type="button" id='edit_row' class=" rounded-pill btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Edit"><i class="far fa-edit"></i></button>
                                     </div>
                                     <div class="row-form mb-1">
-                                        <button type="button" id='copy_row' class="rounded-pill btn btn-info btn-sm copy_row">Copy</button>
+                                        <button type="button" id='copy_row' class="rounded-pill btn btn-info btn-sm copy_row" data-toggle="tooltip" data-placement="top" title="Copy"><i class="far fa-copy"></i></button>
                                     </div>
                                     <div class="row-form ">
-                                        <button type="button" id='delete_row' class="rounded-pill btn btn-danger btn-sm">Delete</button>
+                                        <button type="button" id='delete_row' class="rounded-pill btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Delete"><i class="fas fa-minus-circle"></i></button>
                                     </div>
                                 </div>
                             </div>
@@ -215,13 +220,18 @@
 
                     <div class="row">
                         <div class="col-md-12">
-                            <button type="button" id="add_row" class="btn btn-sm btn-dark pull-left">+ Add Row</button>
+                            <button type="button" id="add_row" class="btn btn-dark pull-left rounded-pill" data-toggle="tooltip" data-placement="top" title="Add Row"><i class="fas fa-plus-circle"></i></button>
                         </div>
                     </div>
                 </div>
             </div>
-            <div>
-                <input class="btn btn-success" type="submit" value="Save Request">
+            <div class="row">
+                <div class="col-md-1 no-gutters">
+                    <button class="btn btn-primary" name="save" type="submit" data-toggle="tooltip" data-placement="top" title="Save"><i class="far fa-save"></i></button>
+                </div>
+                <div class="col-md-1">
+                    <button class="btn btn-success" name="saveandsend" type="submit" data-toggle="tooltip" data-placement="top" title="Save & Send"><i class="fas fa-paper-plane" ></i></button>
+                </div>
             </div>
         </form>
     </div>
@@ -338,13 +348,6 @@
          $new.find('.Getitems').select2({
              placeholder: 'Choose Item',
               });
-
-
-         // $('.tr').each(function(){
-         //     console.log($(this).index());
-         // });
-         //     console.log('tr');
-
      });
 
      $("#edit_row").click(function(e){
@@ -433,29 +436,23 @@
 
 
          let $tr = $(this).parents('.tr');
-         // indexCount++;
+        
          console.log(indexCount);
-         // let next = indexCount;
-         // let last = next-1;
+         
          $table.find('.tr').first().each(function(){
-             // $(this).find('.productOrServiceSelect').select2("destroy");
-             $(this).find(".SelectProduct").removeClass('productOrServiceSelect');
+             
+            $(this).find(".SelectProduct").removeClass('productOrServiceSelect');
 
              $(this).find('.getSubGroup').select2("destroy");
              $(this).find(".SelectProduct").removeClass('getSubGroup');
-             // }
-             // if ($(this).find(".Getitems")[0]){
+             
              $(this).find('.Getitems').select2("destroy");
              $(this).find(".SelectItem").removeClass('Getitems');
-
 
              $(this).find(".SelectProduct").removeClass('productOrServiceSelect').addClass('productOrServiceSelect');
              $(this).find(".SelectProduct").removeClass('getSubGroup').addClass('getSubGroup');
              $(this).find(".SelectItem").removeClass('Getitems').addClass('Getitems');
          });
-
-
-
 
 
          $tr.find('input[type=number]').prop('readonly', true);
@@ -468,20 +465,11 @@
          $tr.find(".SelectProduct").removeClass('getSubGroup').addClass('getSubGroup');
          $tr.find(".SelectItem").removeClass('Getitems').addClass('Getitems');
 
-         // $tr.find('.SelectProduct').select2("destroy");
-         // $tr.find('.SelectItem').select2("destroy");
-         // let $tr = $(this);
          let $new = $tr.clone(true);
          console.log($new);
          $tr.after($new);
 
-         // $('.SelectProduct').select2();
-         // $('.SelectItem').select2();
-         // $new.find('.SelectProduct').select2('val', '');
-         // $new.find('.SelectItem').select2('val', '');
-
-         // $new.find('input[type=text]').val('');
-         // $new.find('input[type=number]').val('');
+         
          $new.find('input[type=number]').prop('readonly', false);
          $new.find('input[type=text]').prop('readonly', false);
          $new.find('input[type=date]').prop('readonly', false);
@@ -492,24 +480,7 @@
          });
          $new.find('.copy_row').show();
 
-         // $new.find('select').val('');
-         // $new.find('.budgetforpiece').prop('readonly', true);
 
-         // let trLength= $('.tr').length;
-         // if(trLength == 2){
-         //     console.log("sdfsfa");
-         //     {{--  if ($(".productOrServiceSelect"+last)[0]){
-         //         $('.productOrServiceSelect'+last).select2("destroy");
-         //     }  --}}
-         //     {{--  $(".SelectProduct").removeClass (function (index, className) {
-         //         return (className.match (/(^|\s)productOrServiceSelect\S+/g) || []).join(' ');
-         //     });  --}}
-         // }
-
-
-     //    $new.find(".SelectProduct").removeClass('productOrServiceSelect').addClass('productOrServiceSelect');
-     //    $new.find(".SelectProduct").removeClass('getSubGroup').addClass('getSubGroup');
-     //    $new.find(".SelectItem").removeClass('Getitems').addClass('Getitems');
 
         $(".SelectProduct").removeClass('productOrServiceSelect').addClass('productOrServiceSelect');
         $(".SelectProduct").removeClass('getSubGroup').addClass('getSubGroup');
@@ -568,7 +539,7 @@
          let aqrtp = $(this).find('.aqrtp');
          let subtract = Math.abs(qrtp-qos);
 
-         aqrtp.val(subtract);
+        //  aqrtp.val(subtract);
 
          // Total Row budget
          var totalVaules = [];
@@ -634,13 +605,9 @@
  // Make Site required if user select project
  $('select[name=project]').on('propertychange change input', function () {
      if ($(this).val() != '') {
-         // $('#provinceselect').show();
          $('#site').prop('required',true);
-         {{--  $('#site').addClass('invalid-feedback');  --}}
      } else {
          $('#site').prop('required',false);
-         {{--  $('#site').removeClass('invalid-feedback');  --}}
-         // $('#provinceselect').hide();
      }
  });
 

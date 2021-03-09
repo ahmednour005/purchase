@@ -22,6 +22,7 @@ class CreateRequestItemsTable extends Migration
             $table->bigInteger('product_id');
             $table->string('item')->nullable();
             $table->text('specification');
+            $table->text('comment')->nullable();
             $table->string('piroirty', 10)->nullable();
             $table->integer('qtreqtopur');
             $table->integer('qtonstore')->nullable();

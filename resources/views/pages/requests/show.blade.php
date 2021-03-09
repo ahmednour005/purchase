@@ -217,17 +217,21 @@
                             }
                         @endphp
                         @if( in_array($prrequest->approval_id, $approval_id_to_array) || $approvals->where('approval_name','Revert')->first()->approval_name == $prrequest->approval_name)
-                        <a class="btn btn-xs btn-success" href="{{ route('requests.showSend', $prrequest->id) }}">
-                            Send to
-                            @if ($user->hasRole('super_admin') || $prrequest->approval->approval_name == 'Pending')
-                                {{$prrequest->mainGroup->approval->approval_name}}
-                            @else
-                            @php
-                                $nextid = $approvals->find($prrequest->approval_id)->stepapprovals->where('id','>',$prrequest->stepapproval_id)->min('id')
-                            @endphp
-                                {{$approvals->find($prrequest->approval_id)->stepapprovals->find($nextid)->step_name}}
-                            @endif
-                        </a>
+                        <form method="POST" action="{{ route("requests.send", $prrequest) }}" enctype="multipart/form-data">
+                            @csrf
+                            <button type="submit" class="btn btn-success m-1" data-toggle="tooltip" data-placement="top" title="Send" data-toggle="tooltip" data-placement="top" title="Send">
+                                @if ($user->hasRole('super_admin') || in_array($prrequest->approval_id, $approval_id_to_array) || $prrequest->approval->approval_name == 'Pending')
+                                <i class="fas fa-paper-plane" ></i>
+                                {{-- {{$prrequest->mainGroup->approval->stepapprovals->first()->step_name}} --}}
+                                @else
+                                @php
+                                    $nextid = $approvals->find($prrequest->approval_id)->stepapprovals->where('id','>',$prrequest->stepapproval_id)->min('id')
+                                @endphp
+                                    {{$approvals->find($prrequest->approval_id)->stepapprovals->find($nextid)->step_name}}
+                                @endif
+                            </button>
+                            @method('GET')
+                        </form>
 
                         @elseif($user->hasRole('super_admin') || in_array($user->id, $prrequest->userstep_ids) && $prrequest->approval->approval_name != 'Pending' )
                             @if($approvals->find($prrequest->approval_id)->approval_name == 'PR Rejected')
@@ -235,40 +239,30 @@
                             @elseif($approvals->find($prrequest->approval_id)->approval_name == 'PR Approved')
                                 {{$approvals->find($prrequest->approval_id)->approval_name}}
                             @else
-                                <a class="btn btn-xs btn-success" href="{{ route('requests.showAnalyze', $prrequest->id) }}">                                        
-                                    Submit analysis
-                                </a>
+                            <form method="POST" class="mr-3" action="{{ route("requests.analyze", $prrequest) }}" enctype="multipart/form-data">
+                                @csrf
+                                <div class="form-group">
+                                    <label for="description">Comment</label>
+                                    <textarea class="form-control {{ $errors->has('comment_text') ? 'is-invalid' : '' }}" name="comment_text" id="comment_text" data-toggle="tooltip" data-placement="top" title="leave a comment on PR">{{ old('comment_text') }}</textarea>
+                    
+                                </div>
+                                {{-- <div class="row"> --}}
+                                    <div class="form-group">
+                                        <button class="btn btn-success " name="approve" type="submit" data-toggle="tooltip" data-placement="top" title="Agree & Send">
+                                            <i class="fas fa-check"></i>                                        
+                                        </button>
+                                        <button class="btn btn-primary" name="revert" type="submit" data-toggle="tooltip" data-placement="top" title="Revert">
+                                            <i class="fas fa-history"></i>
+                                        </button>
+                                        <button class="btn btn-danger float-right" name="reject" type="submit" data-toggle="tooltip" data-placement="top" title="PR Rejected">
+                                            <i class="fas fa-times"> Reject</i>
+                                        </button>
+                                    </div>
+                                {{-- </div> --}}
+                                @method('GET')
+                            </form>
                             @endif    
                         @endif
-                        {{-- @if($user->hasRole('super_admin') || in_array($prrequest->approval_id, [1]))
-                            @if($user->hasRole('super_admin') && $prrequest->approval->approval_name == 'PR Approved' )
-                                {{$approvals->find($prrequest->approval_id)->id}} 
-                            @elseif($user->hasRole('super_admin') || in_array($user->id, $prrequest->userstep_ids) && $prrequest->approval->approval_name == 'PR Rejected' )
-                                {{$approvals->find($prrequest->approval_id)->id}}
-                            @else    
-                                <a class="btn btn-success" href="{{ route('requests.showSend', $prrequest->id) }}">
-                                    Send to
-                                    @if($prrequest->approval->approval_name == 'Pending')
-                                        {{$approvals->find($prrequest->approval_id)->approval_name}}
-                                    @else
-                                    @php
-                                        $nextid = $approvals->find($prrequest->approval_id)->stepapprovals->where('id','>',$prrequest->stepapproval_id)->min('id')
-                                    @endphp
-                                        {{$approvals->find($prrequest->approval_id)->stepapprovals->find($prrequest->stepapproval_id)->step_name ?? ''}}
-                                    @endif
-                                </a>
-                            @endif            
-                        @elseif( in_array($user->id, $prrequest->userstep_ids) && $prrequest->approval->approval_name != 'Pending' || $user->hasRole('super_admin') ?? '')
-                            @if($user->hasRole('super_admin') || in_array($user->id, $prrequest->userstep_ids) && $prrequest->approval->approval_name == 'PR Approved' )
-                                {{$approvals->find($prrequest->approval_id)->approval_name}} 
-                            @elseif($user->hasRole('super_admin') || in_array($user->id, $prrequest->userstep_ids) && $prrequest->approval->approval_name == 'PR Rejected' )
-                                {{$approvals->find($prrequest->approval_id)->approval_name}}
-                            @else
-                                <a class="btn btn-success" href="{{ route('requests.showAnalyze', $prrequest->id) }}">
-                                    Submit to {{$currentstep}}
-                                </a>  
-                            @endif    
-                        @endif     --}}
                 </div>
             </div>
 
@@ -278,4 +272,19 @@
     </div>
 </div>
 
+@endsection
+
+
+@section('scripts')
+<script>
+    $(document).ready(function(){
+        $('button[name=revert]').on('propertychange change click', function () {
+            if ($("#comment_text").val() == '') {
+                $('#comment_text').prop('required',true);
+            } else {
+                $('#comment_text').prop('required',false);
+            }
+        });
+    });
+</script>
 @endsection

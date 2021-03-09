@@ -30,6 +30,7 @@ class CreatePrRequestsTable extends Migration
             $table->json('userstep_ids')->nullable();
 
             $table->bigInteger('main_group_id');
+            $table->integer('approval_id')->nullable();
             $table->integer('created_by_id');
 
             $table->timestamps();

@@ -112,60 +112,81 @@ class PrRequestsController extends Controller
         }
 
 
-        $processingStatus = Approval::where('approval_name','Pending')->first();
+        // $processingStatus = Approval::where('approval_name','Pending')->first();
 
-
-        $prrequest = PrRequest::create([
-            'date' => $request->date,
-            'main_group_id' => $request->main_group_id,
-            'request_number' => $requestnumber,
-            'department' => $request->department,
-            'project' => $request->project,
-            'site' => $request->site,
-            'user_location' => $request->user_location,
-            'created_by_id' => Auth::id(),
-        ]);
-
-
-        foreach ($request->items as $key => $item) {
-            $prrequest->requestitems()->create([
-                'service_id' => $request->service_id[$key],
-                'product_id' => $request->product_id[$key],
-                'item' => $item,
-                'specification' => $request->specifications[$key],
-                'piroirty' => $request->piroirtys[$key],
-                'qtreqtopur' => $request->qtreqtopurs[$key],
-                'qtonstore' => $request->qtonstores[$key],
-                'acqtreqtopur' => $request->acqtreqtopurs[$key],
-                'currency' => $request->currencys[$key],
-                'unit' => $request->units[$key],
-                'budget' => $request->budgets[$key],
-                'rowbudget' => $request->rowbudgets[$key],
-                // 'sumoftotalrowbudget' => $request->sumoftotalrowbudget,
-                // 'request_id' => $prrequest->id,
+        // Save PR and Send to start Cycle
+        if ($request->has('saveandsend')) {
+            // Save PR Main Component
+            $prrequest = PrRequest::create([
+                'date' => $request->date,
+                'main_group_id' => $request->main_group_id,
+                'request_number' => $requestnumber,
+                'department' => $request->department,
+                'project' => $request->project,
+                'site' => $request->site,
+                'user_location' => $request->user_location,
+                'created_by_id' => Auth::id(),
             ]);
+    
+            // Save PR Items
+            foreach ($request->items as $key => $item) {
+                $prrequest->requestitems()->create([
+                    'service_id' => $request->service_id[$key],
+                    'product_id' => $request->product_id[$key],
+                    'item' => $item,
+                    'specification' => $request->specifications[$key],
+                    'comment' => $request->comments[$key],
+                    'piroirty' => $request->piroirtys[$key],
+                    'qtreqtopur' => $request->qtreqtopurs[$key],
+                    'qtonstore' => $request->qtonstores[$key],
+                    'acqtreqtopur' => $request->acqtreqtopurs[$key],
+                    'currency' => $request->currencys[$key],
+                    'unit' => $request->units[$key],
+                    'budget' => $request->budgets[$key],
+                    'rowbudget' => $request->rowbudgets[$key],
+                    // 'sumoftotalrowbudget' => $request->sumoftotalrowbudget,
+                    // 'request_id' => $prrequest->id,
+                ]);
+            }
+            // dd($prrequest);
+            return redirect()->route('requests.send', $prrequest)->with('message', 'Request created & Send Successfully');
+
+        } else {
+            // Save PR Main Component
+            $prrequest = PrRequest::create([
+                'date' => $request->date,
+                'main_group_id' => $request->main_group_id,
+                'request_number' => $requestnumber,
+                'department' => $request->department,
+                'project' => $request->project,
+                'site' => $request->site,
+                'user_location' => $request->user_location,
+                'created_by_id' => Auth::id(),
+            ]);
+    
+            // Save PR Items
+            foreach ($request->items as $key => $item) {
+                $prrequest->requestitems()->create([
+                    'service_id' => $request->service_id[$key],
+                    'product_id' => $request->product_id[$key],
+                    'item' => $item,
+                    'specification' => $request->specifications[$key],
+                    'comment' => $request->comments[$key],
+                    'piroirty' => $request->piroirtys[$key],
+                    'qtreqtopur' => $request->qtreqtopurs[$key],
+                    'qtonstore' => $request->qtonstores[$key],
+                    'acqtreqtopur' => $request->acqtreqtopurs[$key],
+                    'currency' => $request->currencys[$key],
+                    'unit' => $request->units[$key],
+                    'budget' => $request->budgets[$key],
+                    'rowbudget' => $request->rowbudgets[$key],
+                    // 'sumoftotalrowbudget' => $request->sumoftotalrowbudget,
+                    // 'request_id' => $prrequest->id,
+                ]);
+            }
+    
+            return redirect()->route('requests.index')->with('message', 'Request created Successfully');
         }
-
-        // For Test Relationship Purpose
-        // $status = MainGroup::find($request->main_group_id)->approval->id;
-
-        // dd($main_group);
-
-
-        // $status = MainGroup->approval->id;
-
-        // dd($status);
-
-        // $stepapprovals = Approval::find($status)->stepapprovals->all();
-
-        // foreach($stepapprovals as $stepapproval){
-        //     print_r ($stepapproval->step_name.'<br>');
-        //     dd($stepapproval->step_name);
-        // }
-
-        // dd($stepapproval);
-
-        return redirect()->route('requests.index')->with('message', 'Request created Successfully');
 
     }
 
@@ -178,43 +199,11 @@ class PrRequestsController extends Controller
     public function show($id)
     {
         $prrequest = PrRequest::find($id);
-        // $userstep_ids = json_encode($prrequest->userstep_ids);
-        // dd($prrequest->userstep_ids);
         $requestitems = $prrequest->requestitems()->get();
-        // $step_id = PrRequest::find($id)->mainGroup->approval->stepapprovals->first();
         $stepname = PrRequest::find($id)->mainGroup->approval->stepapprovals->pluck('step_name')->first();
         $approvals = Approval::all();
 
-        // $laststepnumber = PrRequest::find($id)->mainGroup->approval->stepapprovals->pluck('step_number')->last();
-        // $users = $step_id->users;
-        // $arr = array();
-        // $index = 0;
-        // foreach($users as $st){
-            // echo "<pre>";
-            // $arr[] = $st->id;
-            // print_r($st->name);
-            // echo "</pre>";
-            // $index++;
-        // }
-
-        // dd($stepname);
-        // for ($i=0; $i < count($arr) ; $i++) {
-        //     echo "<pre>";
-        //         $arr[$i];
-        //     // print_r($st->name);
-        //     echo "</pre>";
-        // }
-        // $stepapproval = StepApproval::find($stepnumber)->get();
-        // dd($stepapproval);
-
-        // foreach($stepapproval as $approv){
-            // foreach($prrequest->mainGroup->approval->stepapprovals as $approv){
-        //     foreach ($approv->users as $user) {
-        //         echo $user->name;
-        //     }$
-        // }
-        // dd($laststepnumber);
-
+      
         $defaultStatus = Approval::where('approval_name','Pending')->first();
 
         $users = User::all();
@@ -291,40 +280,40 @@ class PrRequestsController extends Controller
         //
     }
 
-    public function showSend(PrRequest $prrequest)
-    {
-        // abort_if(!auth()->user()->is_admin, Response::HTTP_FORBIDDEN, '403 Forbidden');
-        $userid = auth()->user();
-        $pending_id = Approval::where('approval_name','Pending')->first()->id;
-        $approval_id = $prrequest->mainGroup->approval->id;
+    // public function showSend(PrRequest $prrequest)
+    // {
+    //     // abort_if(!auth()->user()->is_admin, Response::HTTP_FORBIDDEN, '403 Forbidden');
+    //     $userid = auth()->user();
+    //     $pending_id = Approval::where('approval_name','Pending')->first()->id;
+    //     $approval_id = $prrequest->mainGroup->approval->id;
 
-        if ($prrequest->approval_id = $pending_id) {
-            $stepname = $prrequest->mainGroup->approval->stepapprovals->pluck('step_name')->first();
-            $step = $prrequest->mainGroup->approval->stepapprovals->first();
-            $users = $step->users;
-            // $column = 'user_id';
-            // $user_id = array();
-            // $user_name = array();
-            // $user_jobtitle = array();
-            // foreach($users as $user) {
-            //     $user_id[] = $user->id;
-            //     $user_name[] = $user->name;
-            //     $user_jobtitle[] = $user->job_title;
-            // }
+    //     if ($prrequest->approval_id = $pending_id) {
+    //         $stepname = $prrequest->mainGroup->approval->stepapprovals->pluck('step_name')->first();
+    //         $step = $prrequest->mainGroup->approval->stepapprovals->first();
+    //         $users = $step->users;
+    //         // $column = 'user_id';
+    //         // $user_id = array();
+    //         // $user_name = array();
+    //         // $user_jobtitle = array();
+    //         // foreach($users as $user) {
+    //         //     $user_id[] = $user->id;
+    //         //     $user_name[] = $user->name;
+    //         //     $user_jobtitle[] = $user->job_title;
+    //         // }
 
-            // $users = $prrequest->mainGroup->approval->stepapprovals->users->pluck('name', 'id', 'job_title');
-        // } else if (!in_array($prrequest->approval_id, [3,4])) {
-        //     // $role = 'CFO';
-        //     // $users = Role::find(4)->users->pluck('name', 'id');
-        //     $users = $prrequest->mainGroup->approval->stepapprovals->users->pluck('name', 'id', 'job_title');
-        // } else {
-        //     abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
-        }
+    //         // $users = $prrequest->mainGroup->approval->stepapprovals->users->pluck('name', 'id', 'job_title');
+    //     // } else if (!in_array($prrequest->approval_id, [3,4])) {
+    //     //     // $role = 'CFO';
+    //     //     // $users = Role::find(4)->users->pluck('name', 'id');
+    //     //     $users = $prrequest->mainGroup->approval->stepapprovals->users->pluck('name', 'id', 'job_title');
+    //     // } else {
+    //     //     abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
+    //     }
 
-        return view('pages.requests.send', compact('prrequest', 'stepname', 'users','user_id','user_name','job_title'));
-    }
+    //     return view('pages.requests.send', compact('prrequest', 'stepname', 'users','user_id','user_name','job_title'));
+    // }
 
-    public function send(Request $requestcome, PrRequest $prrequest)
+    public function send(Request $request, PrRequest $prrequest)
     {
         // dd($request);
         // $request = json_decode($requestcome);

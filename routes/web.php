@@ -90,13 +90,13 @@ Route::get('/login/{email?}',function ($email){
    Route::resource('requests', 'PrRequestsController')->middleware('auth');
    Route::get('requests/getSubGroupFromGroup/{id}','PrRequestsController@getSubGroup')->middleware('auth');
    Route::get('requests/getItemFromSubGroup/{id}','PrRequestsController@getItems')->middleware('auth');
-    // Loan Applications
+    
     // Route::delete('requests/destroy', 'LoanApplicationsController@massDestroy')->name('requests.massDestroy');
-    Route::get('requests/{prrequest}/analyze', 'PrRequestsController@showAnalyze')->name('requests.showAnalyze');
-    Route::post('requests/{prrequest}/analyze', 'PrRequestsController@analyze')->name('requests.analyze');
-    Route::get('requests/{prrequest}/send', 'PrRequestsController@showSend')->name('requests.showSend');
+    // Route::get('requests/{prrequest}/analyze', 'PrRequestsController@showAnalyze')->name('requests.showAnalyze');
+    Route::get('requests/{prrequest}/analyze', 'PrRequestsController@analyze')->name('requests.analyze');
+    // Route::get('requests/{prrequest}/send', 'PrRequestsController@showSend')->name('requests.showSend');
     // Route::get('requests/{pr_request}/send', 'PrRequestsController@test')->name('requests.showSend');
-    Route::post('requests/{prrequest}/send', 'PrRequestsController@send')->name('requests.send');
+    Route::get('requests/{prrequest}/send', 'PrRequestsController@send')->name('requests.send');
 
 
    Route::get('export', 'DemoController@export')->name('export')->middleware('auth');
@@ -104,7 +104,7 @@ Route::get('/login/{email?}',function ($email){
    Route::post('import', 'DemoController@import')->name('import')->middleware('auth');
 
     //    approval
-   Route::resource('approvals', 'Approval\ApprovalController')->middleware('auth');
+    Route::resource('approvals', 'Approval\ApprovalController')->middleware('auth');
     Route::get('actions','ActionRequiredController@index')->name('actions.index');
     Route::get('view_action/{id}','ActionRequiredController@show')->name('actions.show');
 
