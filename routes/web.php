@@ -113,6 +113,7 @@ Route::get('/login/{email?}',function ($email){
 // portal
 Route::resource('portal/job_titles', 'Portal\JobTitleController');
 Route::resource('portal/department', 'Portal\DepartmentController');
+Route::resource('portal/workgroup', 'Portal\WorkGroupController');
 
 
 

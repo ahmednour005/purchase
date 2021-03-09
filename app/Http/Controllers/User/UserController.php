@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Department;
+use App\Models\JobTitle;
 use App\Supplier\Prod_Supplier;
 use App\Supplier\Product;
 use App\Supplier\Service;
@@ -22,6 +24,15 @@ class UserController extends Controller
         $users_count=  $users->count();
 
         return view('pages.users.users',compact('users','users_count'));
+    }
+    public function create(){
+
+        $users_count=  User::count();
+        $users = User::all();
+        $job_titles = JobTitle::all();
+        $departments = Department::all();
+
+        return view('pages.users.create',compact('users','users_count','job_titles','departments'));
     }
     public  function  edit($id){
 
